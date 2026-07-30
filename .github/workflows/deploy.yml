@@ -1,0 +1,98 @@
+name: Deploy
+
+# VPS ga qo'lda ishga tushiriladigan deploy (SSH orqali).
+# Avtomatik ishlamaydi — server tayyor bo'lgach Actions → Deploy → Run workflow.
+#
+# Kerakli repozitoriya secretlari (Settings → Secrets → Actions):
+#   DEPLOY_HOST         serverning IP yoki domeni
+#   DEPLOY_USER         SSH foydalanuvchi
+#   DEPLOY_SSH_KEY      SSH maxfiy kaliti (to'liq matn)
+#   DEPLOY_PATH         serverdagi loyiha papkasi, masalan /opt/zehno
+#
+# Serverda oldindan bo'lishi kerak: docker, docker compose, .env fayli
+# (kalitlar bilan) va repozitoriya klonlangan holda.
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Qaysi tag yoki branch deploy qilinsin"
+        required: true
+        default: main
+      run_migrations:
+        description: "Migratsiyalarni qo'llash"
+        type: boolean
+        default: true
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Production
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Secretlar to'liqmi
+        run: |
+          missing=""
+          [ -z "${{ secrets.DEPLOY_HOST }}" ] && missing="$missing DEPLOY_HOST"
+          [ -z "${{ secrets.DEPLOY_USER }}" ] && missing="$missing DEPLOY_USER"
+          [ -z "${{ secrets.DEPLOY_SSH_KEY }}" ] && missing="$missing DEPLOY_SSH_KEY"
+          [ -z "${{ secrets.DEPLOY_PATH }}" ] && missing="$missing DEPLOY_PATH"
+          if [ -n "$missing" ]; then
+            echo "Quyidagi secretlar sozlanmagan:$missing"
+            echo "Settings -> Secrets and variables -> Actions bo'limida qo'shing."
+            exit 1
+          fi
+
+      - name: SSH kalitini o'rnatish
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          ssh-keyscan -H "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Deploy
+        run: |
+          ssh -i ~/.ssh/id_deploy "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" bash -s <<'REMOTE'
+          set -eu
+          cd "${{ secrets.DEPLOY_PATH }}"
+
+          echo "--- kod yangilanmoqda: ${{ inputs.ref }} ---"
+          git fetch --all --tags
+          git checkout "${{ inputs.ref }}"
+          git pull --ff-only || true
+
+          echo "--- obrazlar quriladi ---"
+          docker compose build api web
+
+          if [ "${{ inputs.run_migrations }}" = "true" ]; then
+            echo "--- migratsiyalar ---"
+            docker compose run --rm api alembic upgrade head
+          fi
+
+          echo "--- servislar qayta ishga tushirilmoqda ---"
+          docker compose up -d --remove-orphans
+
+          echo "--- healthcheck ---"
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:8000/health > /dev/null; then
+              curl -s http://localhost:8000/health
+              echo ""
+              echo "Deploy muvaffaqiyatli"
+              exit 0
+            fi
+            sleep 3
+          done
+
+          echo "API ko'tarilmadi — loglar:"
+          docker compose logs api --tail 50
+          exit 1
+          REMOTE
+
+      - name: Kalitni tozalash
+        if: always()
+        run: rm -f ~/.ssh/id_deploy

@@ -3,7 +3,6 @@
   "private": true,
   "version": "0.1.0",
   "description": "Zehno.uz — onlayn ta'lim marketplace platformasi (monorepo)",
-  "workspaces": ["apps/web", "packages/*"],
   "scripts": {
     "up": "docker compose up -d --build",
     "down": "docker compose down",
@@ -11,14 +10,16 @@
     "restart:api": "docker compose restart api worker beat",
     "peertube:up": "docker compose -f docker-compose.peertube.yml up -d",
     "peertube:down": "docker compose -f docker-compose.peertube.yml down",
-    "web:dev": "npm run dev --workspace zehno-web",
-    "web:build": "npm run build --workspace zehno-web",
-    "web:typecheck": "npm run typecheck --workspace zehno-web",
-    "web:lint": "npm run lint --workspace zehno-web",
+    "web:dev": "npm --prefix apps/web run dev",
+    "web:build": "npm --prefix apps/web run build",
+    "web:typecheck": "npm --prefix apps/web run typecheck",
+    "web:lint": "npm --prefix apps/web run lint",
     "api:lint": "docker compose exec api ruff check app",
     "api:test": "docker compose exec api pytest -v",
-    "api:migrate": "docker compose exec api python -m app.cli migrate",
+    "api:migrate": "docker compose exec api alembic upgrade head",
     "api:seed": "docker compose exec api python -m app.cli seed",
-    "api:shell": "docker compose exec api bash"
+    "api:shell": "docker compose exec api bash",
+    "scan:secrets": "sh scripts/scan-secrets.sh",
+    "hooks:install": "git config core.hooksPath .githooks"
   }
 }

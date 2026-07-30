@@ -4,6 +4,8 @@ import type { ApiMessage, AuthResponse, TokenPair } from "./types";
 const PUBLIC_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
 const INTERNAL_BASE = process.env.INTERNAL_API_URL ?? PUBLIC_BASE;
 
+const SERVER_FETCH_TIMEOUT_MS = 8000;
+
 const ACCESS_TOKEN_KEY = "zehno_access_token";
 const USER_KEY = "zehno_user";
 
@@ -160,6 +162,12 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
   }
   if (revalidate !== undefined || tags) {
     init.next = { revalidate, tags };
+  }
+
+  // Server tomonida (build va SSR) javob kelmasa so'rov cheksiz osilib qolmasligi
+  // kerak: `next build` prerender bosqichida bu butun buildni to'xtatib qo'yadi.
+  if (isServer && !init.signal && typeof AbortSignal?.timeout === "function") {
+    init.signal = AbortSignal.timeout(SERVER_FETCH_TIMEOUT_MS);
   }
 
   let response: Response;

@@ -1,0 +1,72 @@
+name: Docker publish
+
+# Obrazlarni GitHub Container Registry (ghcr.io) ga chiqaradi.
+# Qo'shimcha secret talab qilinmaydi — GITHUB_TOKEN yetarli.
+#
+#   ghcr.io/<owner>/zehno-api:main   ghcr.io/<owner>/zehno-api:v1.2.3
+#   ghcr.io/<owner>/zehno-web:main   ghcr.io/<owner>/zehno-web:v1.2.3
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  publish:
+    name: ${{ matrix.name }} obrazi
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: api
+            context: ./apps/api
+          - name: web
+            context: ./apps/web
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: ghcr.io ga kirish
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Teglar
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}-${{ matrix.name }}
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,format=short
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build va push
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          target: production
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=publish-${{ matrix.name }}
+          cache-to: type=gha,scope=publish-${{ matrix.name }},mode=max

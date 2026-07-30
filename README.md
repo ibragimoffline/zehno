@@ -113,6 +113,46 @@ cd apps/web && npm run typecheck && npm run lint && npm run build
 
 ---
 
+## CI/CD (GitHub Actions)
+
+| Workflow | Qachon | Nima qiladi |
+|---|---|---|
+| [`ci.yml`](.github/workflows/ci.yml) | har push va PR | 5 ta parallel job — quyida |
+| [`docker-publish.yml`](.github/workflows/docker-publish.yml) | `main` va `v*` teglari | obrazlarni `ghcr.io` ga chiqaradi |
+| [`deploy.yml`](.github/workflows/deploy.yml) | **qo'lda** (workflow_dispatch) | VPS ga SSH orqali deploy |
+
+### CI joblari
+
+| Job | Tekshiradi |
+|---|---|
+| **Sirlar** | `scan-secrets.sh` — kuzatilayotgan fayllar **va** git tarixi |
+| **Backend** | ruff lint + format · `alembic upgrade` · **`alembic check`** (model↔migratsiya drift) · downgrade→upgrade sikli · pytest · seed · API ko'tariladimi (`/health`, `/openapi.json`) |
+| **Frontend** | `npm ci` · tsc · eslint · `next build` |
+| **Docker** | `api` va `web` production obrazlari quriladimi |
+| **Compose** | `docker-compose.yml` va `docker-compose.peertube.yml` validatsiyasi |
+
+Backend job'i uchun Postgres va Redis servis konteynerlari ko'tariladi — migratsiyalar
+haqiqiy bazada tekshiriladi.
+
+### Obrazlar
+
+```
+ghcr.io/<owner>/zehno-api:latest   ghcr.io/<owner>/zehno-api:v1.0.0
+ghcr.io/<owner>/zehno-web:latest   ghcr.io/<owner>/zehno-web:v1.0.0
+```
+
+Qo'shimcha secret kerak emas — `GITHUB_TOKEN` yetarli. Reliz chiqarish:
+
+```bash
+git tag v0.1.0 && git push origin v0.1.0
+```
+
+### Deploy
+
+`deploy.yml` avtomatik ishlamaydi. Server tayyor bo'lgach **Actions → Deploy → Run workflow**.
+Kerakli secretlar (Settings → Secrets → Actions): `DEPLOY_HOST`, `DEPLOY_USER`,
+`DEPLOY_SSH_KEY`, `DEPLOY_PATH`. Secret yetishmasa workflow aniq xabar bilan to'xtaydi.
+
 ## Sirlarni himoyalash (majburiy qadam)
 
 Repozitoriyani klonlagach **bir marta** bajaring — bu pre-commit tekshiruvini yoqadi:
