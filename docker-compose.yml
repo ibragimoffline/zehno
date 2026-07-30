@@ -1,0 +1,174 @@
+name: zehno
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-zehno}
+      POSTGRES_USER: ${POSTGRES_USER:-zehno}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-zehno_dev_password}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-zehno} -d ${POSTGRES_DB:-zehno}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  minio:
+    image: minio/minio:latest
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY:-zehno_minio}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY:-zehno_minio_password}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - miniodata:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # Bucket'ni bir marta yaratib chiqadigan yordamchi konteyner
+  minio-init:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 ${S3_ACCESS_KEY:-zehno_minio} ${S3_SECRET_KEY:-zehno_minio_password} &&
+      mc mb --ignore-existing local/${S3_BUCKET:-zehno} &&
+      mc anonymous set download local/${S3_BUCKET:-zehno}/public &&
+      echo '[minio-init] bucket tayyor';
+      "
+    restart: "no"
+
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+      target: development
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      POSTGRES_HOST: postgres
+      REDIS_HOST: redis
+      S3_ENDPOINT_URL: http://minio:9000
+    command: >
+      sh -c "python -m app.cli wait-for-services &&
+             python -m app.cli migrate &&
+             python -m app.cli ensure-bucket &&
+             python -m app.cli seed &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./apps/api:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+      target: development
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      POSTGRES_HOST: postgres
+      REDIS_HOST: redis
+      S3_ENDPOINT_URL: http://minio:9000
+    command: celery -A app.worker.celery_app.celery_app worker --loglevel=INFO --concurrency=4
+    volumes:
+      - ./apps/api:/app
+    depends_on:
+      api:
+        condition: service_started
+      redis:
+        condition: service_healthy
+
+  beat:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+      target: development
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      POSTGRES_HOST: postgres
+      REDIS_HOST: redis
+    command: celery -A app.worker.celery_app.celery_app beat --loglevel=INFO
+    volumes:
+      - ./apps/api:/app
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  telegram-bot:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+      target: development
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      POSTGRES_HOST: postgres
+      REDIS_HOST: redis
+    command: python -m app.bot.main
+    volumes:
+      - ./apps/api:/app
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+      target: development
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000/api/v1
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      NEXT_PUBLIC_SITE_NAME: Zehno.uz
+      # Server komponentlaridan (container ichidan) API'ga murojaat
+      INTERNAL_API_URL: http://api:8000/api/v1
+    command: npm run dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./apps/web:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
+  redisdata:
+  miniodata:

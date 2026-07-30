@@ -1,0 +1,24 @@
+{
+  "name": "zehno",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Zehno.uz — onlayn ta'lim marketplace platformasi (monorepo)",
+  "workspaces": ["apps/web", "packages/*"],
+  "scripts": {
+    "up": "docker compose up -d --build",
+    "down": "docker compose down",
+    "logs": "docker compose logs -f api web worker",
+    "restart:api": "docker compose restart api worker beat",
+    "peertube:up": "docker compose -f docker-compose.peertube.yml up -d",
+    "peertube:down": "docker compose -f docker-compose.peertube.yml down",
+    "web:dev": "npm run dev --workspace zehno-web",
+    "web:build": "npm run build --workspace zehno-web",
+    "web:typecheck": "npm run typecheck --workspace zehno-web",
+    "web:lint": "npm run lint --workspace zehno-web",
+    "api:lint": "docker compose exec api ruff check app",
+    "api:test": "docker compose exec api pytest -v",
+    "api:migrate": "docker compose exec api python -m app.cli migrate",
+    "api:seed": "docker compose exec api python -m app.cli seed",
+    "api:shell": "docker compose exec api bash"
+  }
+}

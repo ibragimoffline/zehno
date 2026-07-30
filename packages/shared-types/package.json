@@ -1,0 +1,8 @@
+{
+  "name": "@zehno/shared-types",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Frontend va boshqa client'lar orasida umumiy TypeScript tiplar",
+  "types": "index.ts",
+  "main": "index.ts"
+}

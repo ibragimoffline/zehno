@@ -1,0 +1,96 @@
+"""Barcha modellar — Alembic autogenerate uchun bitta joydan import qilinadi."""
+
+from app.db.base import Base
+from app.models.catalog import (
+    Category,
+    Course,
+    CourseModule,
+    CourseReview,
+    Lesson,
+    ModerationLog,
+    VideoAsset,
+)
+from app.models.certificate import Certificate
+from app.models.commerce import (
+    CartItem,
+    Coupon,
+    Order,
+    OrderItem,
+    Payment,
+    PayoutRequest,
+)
+from app.models.crm import CrmSyncLog
+from app.models.enums import (
+    CouponType,
+    CourseLanguage,
+    CourseLevel,
+    CourseStatus,
+    CrmSyncStatus,
+    EnrollmentSource,
+    EnrollmentStatus,
+    IntegrationHealth,
+    IntegrationKind,
+    LessonContentType,
+    ModerationAction,
+    NotificationChannel,
+    NotificationStatus,
+    OrderStatus,
+    OrganizationType,
+    PaymentStatus,
+    ReviewStatus,
+    UserRole,
+    VideoAssetStatus,
+)
+from app.models.learning import Enrollment, LessonProgress, Quiz, QuizAttempt
+from app.models.organization import Organization
+from app.models.system import AuditLog, IntegrationStatus, NotificationLog, SystemSetting
+from app.models.user import RefreshToken, User
+
+__all__ = [
+    "AuditLog",
+    "Base",
+    "CartItem",
+    "Category",
+    "Certificate",
+    "Coupon",
+    "CouponType",
+    "Course",
+    "CourseLanguage",
+    "CourseLevel",
+    "CourseModule",
+    "CourseReview",
+    "CourseStatus",
+    "CrmSyncLog",
+    "CrmSyncStatus",
+    "Enrollment",
+    "EnrollmentSource",
+    "EnrollmentStatus",
+    "IntegrationHealth",
+    "IntegrationKind",
+    "IntegrationStatus",
+    "Lesson",
+    "LessonContentType",
+    "LessonProgress",
+    "ModerationAction",
+    "ModerationLog",
+    "NotificationChannel",
+    "NotificationLog",
+    "NotificationStatus",
+    "Order",
+    "OrderItem",
+    "OrderStatus",
+    "Organization",
+    "OrganizationType",
+    "Payment",
+    "PaymentStatus",
+    "PayoutRequest",
+    "Quiz",
+    "QuizAttempt",
+    "RefreshToken",
+    "ReviewStatus",
+    "SystemSetting",
+    "User",
+    "UserRole",
+    "VideoAsset",
+    "VideoAssetStatus",
+]

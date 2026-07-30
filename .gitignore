@@ -1,0 +1,50 @@
+# ---- Env & secrets ----
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# ---- Python / FastAPI ----
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# ---- Node / Next.js ----
+node_modules/
+.next/
+out/
+.turbo/
+*.tsbuildinfo
+.pnpm-store/
+npm-debug.log*
+yarn-error.log*
+
+# ---- Docker / data volumes ----
+.docker-data/
+pgdata/
+miniodata/
+
+# ---- Editors / OS ----
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# ---- Local artefacts ----
+*.log
+storage/
+tmp/

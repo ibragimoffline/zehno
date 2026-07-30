@@ -1,0 +1,67 @@
+name: zehno-peertube
+
+# PeerTube — MVP bosqichida bepul, self-hosted video hosting.
+# Alohida ishga tushiriladi (video encoding CPU talab qiladi, ideal holda alohida VPS):
+#   docker compose -f docker-compose.peertube.yml up -d
+#
+# Keyin .env da:
+#   VIDEO_PROVIDER=peertube
+#   PEERTUBE_BASE_URL=http://localhost:9010   (yoki serveringiz domeni)
+#   PEERTUBE_USERNAME / PEERTUBE_PASSWORD / PEERTUBE_CHANNEL_ID
+
+services:
+  peertube-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: peertube
+      POSTGRES_USER: peertube
+      POSTGRES_PASSWORD: ${PEERTUBE_DB_PASSWORD:-peertube_dev_password}
+    volumes:
+      - ptdb:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U peertube"]
+      interval: 5s
+      retries: 20
+
+  peertube-redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - ptredis:/data
+
+  peertube:
+    image: chocobozzz/peertube:production-bookworm
+    restart: unless-stopped
+    environment:
+      PEERTUBE_WEBSERVER_HOSTNAME: ${PEERTUBE_HOSTNAME:-localhost}
+      PEERTUBE_WEBSERVER_PORT: 9010
+      PEERTUBE_WEBSERVER_HTTPS: "false"
+      PEERTUBE_TRUST_PROXY: '["127.0.0.1", "loopback", "172.16.0.0/12"]'
+      PEERTUBE_DB_HOSTNAME: peertube-db
+      PEERTUBE_DB_USERNAME: peertube
+      PEERTUBE_DB_PASSWORD: ${PEERTUBE_DB_PASSWORD:-peertube_dev_password}
+      PEERTUBE_REDIS_HOSTNAME: peertube-redis
+      PEERTUBE_ADMIN_EMAIL: ${PEERTUBE_ADMIN_EMAIL:-admin@zehno.uz}
+      PEERTUBE_SIGNUP_ENABLED: "false"
+      PEERTUBE_TRANSCODING_ENABLED: "true"
+      PEERTUBE_TRANSCODING_HLS_ENABLED: "true"
+      # Dastlabki admin paroli konteyner loglarida chiqadi:
+      #   docker compose -f docker-compose.peertube.yml logs peertube | grep -i password
+    ports:
+      - "9010:9000"
+      - "1935:1935"
+    volumes:
+      - ptdata:/data
+      - ptconfig:/config
+    depends_on:
+      peertube-db:
+        condition: service_healthy
+      peertube-redis:
+        condition: service_started
+
+volumes:
+  ptdb:
+  ptredis:
+  ptdata:
+  ptconfig:
