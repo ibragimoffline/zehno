@@ -1,5 +1,3 @@
-"""Barcha modellar — Alembic autogenerate uchun bitta joydan import qilinadi."""
-
 from app.db.base import Base
 from app.models.catalog import (
     Category,

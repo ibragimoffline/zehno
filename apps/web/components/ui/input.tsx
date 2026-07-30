@@ -58,7 +58,6 @@ export const Checkbox = React.forwardRef<
 ));
 Checkbox.displayName = "Checkbox";
 
-/** Label + input + xato xabari — FRONTEND_UX_UI 9 (a11y talablari) */
 export function Field({
   label,
   htmlFor,

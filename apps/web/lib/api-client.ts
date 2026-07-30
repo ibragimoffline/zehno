@@ -1,12 +1,3 @@
-/**
- * API klient — barcha backend so'rovlari shu yerdan o'tadi.
- *
- * Xususiyatlari:
- * - access token `localStorage` da, refresh token HttpOnly cookie'da (backend qo'yadi)
- * - 401 kelganda avtomatik `/auth/refresh` va so'rovni bir marta qayta yuborish
- * - bir vaqtda kelgan bir nechta 401 uchun bitta refresh (in-flight promise)
- * - server (RSC) tomonida `INTERNAL_API_URL` ishlatiladi (konteynerlar orasidagi manzil)
- */
 
 import type { ApiMessage, AuthResponse, TokenPair } from "./types";
 
@@ -19,7 +10,6 @@ const USER_KEY = "zehno_user";
 export const isServer = typeof window === "undefined";
 export const apiBaseUrl = () => (isServer ? INTERNAL_BASE : PUBLIC_BASE);
 
-// ---------------------------------------------------------------- token store
 export const tokenStore = {
   get(): string | null {
     if (isServer) return null;
@@ -35,7 +25,6 @@ export const tokenStore = {
       if (token) window.localStorage.setItem(ACCESS_TOKEN_KEY, token);
       else window.localStorage.removeItem(ACCESS_TOKEN_KEY);
     } catch {
-      /* private mode */
     }
   },
   getUser<T>(): T | null {
@@ -53,7 +42,6 @@ export const tokenStore = {
       if (user) window.localStorage.setItem(USER_KEY, JSON.stringify(user));
       else window.localStorage.removeItem(USER_KEY);
     } catch {
-      /* noop */
     }
   },
   clear() {
@@ -62,7 +50,6 @@ export const tokenStore = {
   },
 };
 
-// ---------------------------------------------------------------- xatolar
 export class ApiError extends Error {
   status: number;
   code: string;
@@ -89,10 +76,8 @@ interface RequestOptions extends Omit<RequestInit, "body"> {
   body?: unknown;
   query?: Record<string, string | number | boolean | undefined | null>;
   auth?: boolean;
-  /** Next.js keshlash sozlamalari (server komponentlarda) */
   revalidate?: number | false;
   tags?: string[];
-  /** 401 dan keyin qayta urinishni o'chirish (ichki foydalanish) */
   _retried?: boolean;
 }
 
@@ -108,7 +93,6 @@ function buildUrl(path: string, query?: RequestOptions["query"]): string {
   return url.toString();
 }
 
-// ---------------------------------------------------------------- refresh oqimi
 let refreshPromise: Promise<string | null> | null = null;
 
 async function refreshAccessToken(): Promise<string | null> {
@@ -133,7 +117,6 @@ async function refreshAccessToken(): Promise<string | null> {
     } catch {
       return null;
     } finally {
-      // keyingi 401 uchun yangi refresh boshlanishi kerak
       setTimeout(() => {
         refreshPromise = null;
       }, 0);
@@ -143,7 +126,6 @@ async function refreshAccessToken(): Promise<string | null> {
   return refreshPromise;
 }
 
-// ---------------------------------------------------------------- asosiy request
 export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const {
     body,
@@ -192,7 +174,6 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
     );
   }
 
-  // 401 → refresh → bir marta qayta urinish
   if (response.status === 401 && auth && !_retried && !isServer) {
     const token = await refreshAccessToken();
     if (token) {
@@ -236,7 +217,6 @@ export const api = {
     request<T>(path, { ...options, method: "DELETE" }),
 };
 
-// ---------------------------------------------------------------- auth helperlari
 export const authApi = {
   async login(login: string, password: string): Promise<AuthResponse> {
     const result = await api.post<AuthResponse>("/auth/login", { login, password }, { auth: false });

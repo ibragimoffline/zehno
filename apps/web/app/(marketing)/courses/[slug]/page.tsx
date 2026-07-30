@@ -75,7 +75,6 @@ export default async function CourseDetailPage({
 
   return (
     <div>
-      {/* ============ Yuqori blok ============ */}
       <section className="border-b bg-gradient-to-br from-primary-50 to-background">
         <div className="container-page grid gap-8 py-10 lg:grid-cols-[1fr_360px]">
           <div>
@@ -142,7 +141,6 @@ export default async function CourseDetailPage({
             ) : null}
           </div>
 
-          {/* Sotib olish paneli */}
           <aside className="lg:-mb-24 lg:sticky lg:top-20 lg:self-start">
             <div className="overflow-hidden rounded-2xl border bg-card shadow-card-hover">
               <div className="relative aspect-video bg-muted">
@@ -210,10 +208,8 @@ export default async function CourseDetailPage({
         </div>
       </section>
 
-      {/* ============ Kontent ============ */}
       <div className="container-page grid gap-10 py-10 lg:grid-cols-[1fr_360px]">
         <div className="min-w-0 space-y-10">
-          {/* Nima o'rganasiz */}
           {course.what_you_learn && course.what_you_learn.length > 0 ? (
             <section className="rounded-xl border bg-card p-6">
               <h2 className="text-xl">Nima o&apos;rganasiz</h2>
@@ -228,7 +224,6 @@ export default async function CourseDetailPage({
             </section>
           ) : null}
 
-          {/* Dastur */}
           <section>
             <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
               <h2 className="text-xl">Kurs dasturi</h2>
@@ -271,7 +266,6 @@ export default async function CourseDetailPage({
             </div>
           </section>
 
-          {/* Talablar */}
           {course.requirements && course.requirements.length > 0 ? (
             <section>
               <h2 className="text-xl">Talablar</h2>
@@ -286,7 +280,6 @@ export default async function CourseDetailPage({
             </section>
           ) : null}
 
-          {/* Tavsif */}
           {course.description ? (
             <section>
               <h2 className="text-xl">Kurs haqida</h2>
@@ -296,7 +289,6 @@ export default async function CourseDetailPage({
             </section>
           ) : null}
 
-          {/* Kimga mos */}
           {course.target_audience && course.target_audience.length > 0 ? (
             <section>
               <h2 className="text-xl">Bu kurs kimga mos</h2>
@@ -311,7 +303,6 @@ export default async function CourseDetailPage({
             </section>
           ) : null}
 
-          {/* Ustoz haqida */}
           {course.owner ? (
             <section className="rounded-xl border bg-card p-6">
               <h2 className="text-xl">Ustoz haqida</h2>
@@ -333,15 +324,12 @@ export default async function CourseDetailPage({
             </section>
           ) : null}
 
-          {/* Sharhlar */}
           <CourseReviews courseId={course.id} isEnrolled={course.is_enrolled} />
         </div>
 
-        {/* O'ng ustun (mobil uchun narx takrorlanmaydi) */}
         <div className="hidden lg:block" aria-hidden />
       </div>
 
-      {/* Mobil pastdagi sticky panel */}
       <div className="sticky bottom-0 z-30 border-t bg-card p-4 shadow-[0_-4px_16px_-4px_rgb(15_23_42/0.12)] lg:hidden">
         <div className="flex items-center gap-3">
           <div className="min-w-0 flex-1">

@@ -1,5 +1,3 @@
-"""Sertifikat endpointlari (ochiq tekshiruv + o'z sertifikatlarim)."""
-
 from __future__ import annotations
 
 import asyncio
@@ -84,7 +82,6 @@ async def issue_certificate(
     if not enrollment.course.has_certificate:
         raise ConflictError("Bu kursda sertifikat berilmaydi")
 
-    # PDF generatsiyasi sinxron (fpdf2 + boto3) — threadpool'da bajaramiz
     def _generate() -> dict:
         with sync_session() as session:
             certificate = CertificateService(session).issue(enrollment_id)

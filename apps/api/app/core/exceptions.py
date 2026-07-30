@@ -1,12 +1,3 @@
-"""Ilova xatolari va global exception handlerlar.
-
-Barcha xato javoblari bir xil shaklda qaytadi — frontend uchun qulay:
-
-```json
-{"error": {"code": "not_found", "message": "Kurs topilmadi", "details": null}}
-```
-"""
-
 from __future__ import annotations
 
 import logging
@@ -23,8 +14,6 @@ logger = logging.getLogger(__name__)
 
 
 class AppError(Exception):
-    """Ilovaning barcha biznes-xatolari uchun asos."""
-
     status_code: int = status.HTTP_400_BAD_REQUEST
     code: str = "app_error"
     message: str = "Xatolik yuz berdi"

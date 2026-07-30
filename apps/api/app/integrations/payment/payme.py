@@ -1,13 +1,3 @@
-"""Payme (Paycom) Merchant API adapteri.
-
-Payme JSON-RPC 2.0 protokoli orqali ishlaydi. Webhook metodlari:
-`CheckPerformTransaction`, `CreateTransaction`, `PerformTransaction`,
-`CancelTransaction`, `CheckTransaction`, `GetStatement`.
-
-Autentifikatsiya: `Authorization: Basic base64("Paycom:<MERCHANT_KEY>")`.
-Summalar **tiyin**da (1 so'm = 100 tiyin) uzatiladi.
-"""
-
 from __future__ import annotations
 
 import base64
@@ -25,7 +15,6 @@ from app.models.enums import PaymentStatus
 
 logger = logging.getLogger(__name__)
 
-# Payme xato kodlari
 ERR_TRANSACTION_NOT_FOUND = -31003
 ERR_INVALID_AMOUNT = -31001
 ERR_ORDER_NOT_FOUND = -31050
@@ -40,9 +29,7 @@ class PaymeProvider(PaymentProvider):
     def is_configured(self) -> bool:
         return bool(settings.PAYME_MERCHANT_ID and settings.PAYME_MERCHANT_KEY)
 
-    # ------------------------------------------------------------ invoys
     async def create_invoice(self, request: InvoiceRequest) -> InvoiceResult:
-        """Payme'da invoys "checkout link" orqali yaratiladi (base64 parametrlar)."""
         amount_tiyin = int(Decimal(request.amount) * 100)
         params = [
             f"m={settings.PAYME_MERCHANT_ID}",
@@ -60,7 +47,6 @@ class PaymeProvider(PaymentProvider):
             provider_meta={"amount_tiyin": amount_tiyin, "sandbox": settings.PAYMENT_SANDBOX},
         )
 
-    # ------------------------------------------------------------ webhook
     def _check_auth(self, headers: dict[str, str]) -> bool:
         auth = headers.get("authorization") or headers.get("Authorization") or ""
         if not auth.lower().startswith("basic "):

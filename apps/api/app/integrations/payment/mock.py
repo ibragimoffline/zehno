@@ -1,10 +1,3 @@
-"""Mock to'lov provayderi — sandbox rejimida to'liq oqimni sinash uchun.
-
-Checkout URL frontenddagi `/checkout/mock/{order_id}` sahifasiga olib boradi:
-u yerda "To'lovni tasdiqlash" tugmasi webhook'ni chaqiradi. Shu tufayli Payme/Click
-merchant kalitlarisiz ham savat → to'lov → kursga kirish oqimini test qilish mumkin.
-"""
-
 from __future__ import annotations
 
 import logging

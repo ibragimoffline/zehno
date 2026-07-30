@@ -1,5 +1,3 @@
-"""Tizim modellari: audit log, bildirishnoma jurnali, integratsiya holati, sozlamalar."""
-
 from __future__ import annotations
 
 import uuid
@@ -33,8 +31,6 @@ if TYPE_CHECKING:
 
 
 class AuditLog(UUIDPrimaryKeyMixin, TimestampMixin, Base):
-    """Admin va org_admin harakatlari tarixi (ADDITIONAL_FEATURES 5)."""
-
     __tablename__ = "audit_logs"
     __table_args__ = (Index("ix_audit_actor_created", "actor_id", "created_at"),)
 
@@ -53,8 +49,6 @@ class AuditLog(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
 
 class NotificationLog(UUIDPrimaryKeyMixin, TimestampMixin, Base):
-    """Yuborilgan bildirishnomalar (Telegram/email/push)."""
-
     __tablename__ = "notification_logs"
     __table_args__ = (Index("ix_notification_user_created", "user_id", "created_at"),)
 
@@ -84,15 +78,7 @@ class NotificationLog(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
 
 class IntegrationStatus(UUIDPrimaryKeyMixin, TimestampMixin, Base):
-    """Super-admin panelidagi "Integratsiyalar monitoringi" uchun holat jadvali.
-
-    FRONTEND_UX_UI 7.3 dagi jadvalni to'ldiradi: har bir adapter ishlaganda
-    (yoki xato bergan paytda) shu yozuv yangilanadi.
-    """
-
     __tablename__ = "integration_statuses"
-    # Bitta provayder nomi bir nechta turda uchrashi mumkin (masalan `mock` —
-    # video, to'lov va CRM uchun), shuning uchun unikal kalit juftlik bo'yicha.
     __table_args__ = (UniqueConstraint("kind", "provider", name="uq_integration_kind_provider"),)
 
     kind: Mapped[IntegrationKind] = mapped_column(
@@ -116,8 +102,6 @@ class IntegrationStatus(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
 
 class SystemSetting(UUIDPrimaryKeyMixin, TimestampMixin, Base):
-    """Komissiya foizi, feature flaglar va boshqa runtime sozlamalar."""
-
     __tablename__ = "system_settings"
 
     key: Mapped[str] = mapped_column(String(80), unique=True, index=True, nullable=False)

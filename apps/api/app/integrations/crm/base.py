@@ -1,5 +1,3 @@
-"""CrmProvider interfeysi (B2B nazorat uchun)."""
-
 from __future__ import annotations
 
 import abc
@@ -11,8 +9,6 @@ from app.models.enums import IntegrationKind
 
 @dataclass(slots=True)
 class CrmContact:
-    """CRM'dagi Contact — platformadagi B2B talaba."""
-
     full_name: str
     email: str | None = None
     phone: str | None = None
@@ -23,8 +19,6 @@ class CrmContact:
 
 @dataclass(slots=True)
 class CrmCompany:
-    """CRM'dagi Company — B2B mijoz tashkiloti."""
-
     name: str
     external_id: str | None = None
     email: str | None = None
@@ -35,8 +29,6 @@ class CrmCompany:
 
 @dataclass(slots=True)
 class CrmProgressUpdate:
-    """Talaba progressini CRM'ga yozish uchun paket."""
-
     contact_external_id: str
     course_title: str
     progress_percent: int
@@ -50,17 +42,13 @@ class CrmProvider(IntegrationAdapter, abc.ABC):
     kind = IntegrationKind.crm
 
     @abc.abstractmethod
-    async def upsert_company(self, company: CrmCompany) -> str:
-        """Kompaniyani yaratadi/yangilaydi va CRM ID qaytaradi."""
+    async def upsert_company(self, company: CrmCompany) -> str: ...
 
     @abc.abstractmethod
-    async def upsert_contact(self, contact: CrmContact) -> str:
-        """Kontaktni yaratadi/yangilaydi va CRM ID qaytaradi."""
+    async def upsert_contact(self, contact: CrmContact) -> str: ...
 
     @abc.abstractmethod
-    async def push_progress(self, update: CrmProgressUpdate) -> bool:
-        """Progressni CRM'ga yozadi (custom field yoki timeline comment orqali)."""
+    async def push_progress(self, update: CrmProgressUpdate) -> bool: ...
 
     async def create_deal(self, title: str, amount: float, contact_external_id: str) -> str | None:
-        """Ixtiyoriy: sotuv (Deal) yaratish."""
         return None

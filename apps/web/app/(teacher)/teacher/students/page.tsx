@@ -35,7 +35,6 @@ export default function TeacherStudentsPage() {
       api.get<Page<CourseAdminSummary>>("/teacher/courses", { query: { per_page: 100 } }),
   });
 
-  // Ustoz faqat o'z kurslaridagi talabalarni ko'radi (backend RBAC bilan cheklaydi)
   const { data, isLoading } = useQuery({
     queryKey: ["teacher-students", courseId, page],
     queryFn: () =>

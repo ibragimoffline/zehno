@@ -1,5 +1,3 @@
-"""Video transkodlash holatini kuzatish task'lari."""
-
 from __future__ import annotations
 
 import asyncio
@@ -17,12 +15,11 @@ from app.worker.celery_app import celery_app
 
 logger = logging.getLogger(__name__)
 
-MAX_POLLS = 60  # ~30 daqiqa (30 sekundlik intervalda)
+MAX_POLLS = 60
 
 
 @celery_app.task(name="app.worker.tasks.video.poll_video_status", bind=True)
 def poll_video_status(self, video_asset_id: str, attempt: int = 1) -> dict:
-    """Provayderdan transkodlash holatini so'raydi, tayyor bo'lguncha qayta rejalashtiradi."""
     with sync_session() as db:
         asset = db.scalar(
             select(VideoAsset)
@@ -60,7 +57,6 @@ def poll_video_status(self, video_asset_id: str, attempt: int = 1) -> dict:
 
 @celery_app.task(name="app.worker.tasks.video.recalculate_lesson_duration")
 def recalculate_lesson_duration(lesson_id: str) -> dict:
-    """Video tayyor bo'lgach dars va kurs davomiyligini yangilaydi."""
     from sqlalchemy import func
 
     from app.models.catalog import Course
@@ -102,7 +98,6 @@ def recalculate_lesson_duration(lesson_id: str) -> dict:
 
 @celery_app.task(name="app.worker.tasks.video.delete_remote_video")
 def delete_remote_video(provider_name: str, external_video_id: str) -> dict:
-    """Kurs o'chirilganda provayderdagi videolarni tozalash."""
     provider = get_video_provider(provider_name)
     try:
         asyncio.run(provider.delete_video(external_video_id))

@@ -1,5 +1,3 @@
-"""Super-admin paneli: KPI dashboard, integratsiya monitoringi, tizim sozlamalari, audit."""
-
 from __future__ import annotations
 
 import asyncio
@@ -38,7 +36,6 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/admin", tags=["Super Admin"])
 
 
-# ------------------------------------------------------------------ sxemalar
 class PlatformKpi(BaseModel):
     revenue_total: Decimal
     revenue_month: Decimal
@@ -108,7 +105,6 @@ class AuditLogView(ORMModel):
     created_at: datetime
 
 
-# ------------------------------------------------------------------ dashboard
 @router.get("/dashboard", response_model=PlatformKpi, summary="Platforma KPI (super-admin)")
 async def dashboard(_: AdminUser, db: DbSession) -> PlatformKpi:
     now = datetime.now(UTC)
@@ -259,15 +255,12 @@ async def activity_feed(
     return items[:limit]
 
 
-# ------------------------------------------------------------------ integratsiyalar
 @router.get(
     "/integrations",
     response_model=list[IntegrationStatusView],
     summary="Integratsiyalar monitoringi",
 )
 async def integrations(_: AdminUser, db: DbSession) -> list[IntegrationStatusView]:
-    """FRONTEND_UX_UI 7.3 dagi jadval uchun ma'lumot."""
-    # Kalit — (kind, provider): `mock` nomi bir vaqtda video/to'lov/CRM uchun ishlatiladi
     stored = {
         (row.kind, row.provider): row for row in (await db.scalars(select(IntegrationStatus))).all()
     }
@@ -299,7 +292,6 @@ async def integrations(_: AdminUser, db: DbSession) -> list[IntegrationStatusVie
             )
         )
 
-    # Obyekt saqlash (S3/MinIO) ham monitoringda ko'rinadi — boto3 sinxron
     ok, error = await asyncio.to_thread(StorageService().healthcheck)
     result.append(
         IntegrationStatusView(
@@ -377,7 +369,6 @@ async def run_healthchecks(_: AdminUser, db: DbSession) -> list[IntegrationStatu
     return result
 
 
-# ------------------------------------------------------------------ sozlamalar
 @router.get(
     "/settings", response_model=list[SystemSettingView], summary="Tizim sozlamalari / feature flags"
 )
@@ -412,7 +403,6 @@ async def delete_setting(key: str, _: AdminUser, db: DbSession) -> Message:
     return Message(message="Sozlama o'chirildi")
 
 
-# ------------------------------------------------------------------ audit
 @router.get("/audit-logs", response_model=Page[AuditLogView], summary="Audit loglari")
 async def audit_logs(
     _: AdminUser,

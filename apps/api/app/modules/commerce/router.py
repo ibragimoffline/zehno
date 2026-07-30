@@ -1,5 +1,3 @@
-"""Commerce endpointlari: savat, checkout, to'lov webhooklari, kuponlar, daromad."""
-
 from __future__ import annotations
 
 import logging
@@ -47,9 +45,6 @@ router = APIRouter(tags=["Commerce"])
 ZERO = Decimal("0")
 
 
-# ===================================================================
-#  Savat
-# ===================================================================
 @router.get("/cart", response_model=CartSummary, summary="Savat")
 async def get_cart(user: CurrentUser, db: DbSession) -> CartSummary:
     items = await CartService(db).list_items(user)
@@ -85,9 +80,6 @@ async def clear_cart(user: CurrentUser, db: DbSession) -> Message:
     return Message(message="Savat bo'shatildi")
 
 
-# ===================================================================
-#  Checkout
-# ===================================================================
 @router.post(
     "/cart/checkout",
     response_model=CheckoutResponse,
@@ -148,9 +140,6 @@ async def order_payments(
     return [PaymentView.model_validate(p) for p in order.payments]
 
 
-# ===================================================================
-#  To'lov webhooklari
-# ===================================================================
 @router.post("/payments/webhook/payme", summary="Payme webhook (JSON-RPC)")
 async def payme_webhook(request: Request, db: DbSession) -> dict:
     payload = await request.json()
@@ -173,9 +162,6 @@ async def mock_webhook(request: Request, db: DbSession) -> dict:
     return await CheckoutService(db).handle_webhook("mock", payload, dict(request.headers))
 
 
-# ===================================================================
-#  Kuponlar
-# ===================================================================
 @router.post(
     "/coupons/validate", response_model=CouponValidateResponse, summary="Kuponni tekshirish"
 )
@@ -242,9 +228,6 @@ async def delete_coupon(coupon_id: uuid.UUID, user: TeacherUser, db: DbSession) 
     return Message(message="Kupon o'chirildi")
 
 
-# ===================================================================
-#  Daromad va payout
-# ===================================================================
 @router.get("/teacher/earnings", response_model=EarningsSummary, summary="Daromad xulosasi")
 async def earnings_summary(user: TeacherUser, db: DbSession) -> EarningsSummary:
     return EarningsSummary(**await EarningsService(db).summary(user))
@@ -305,9 +288,6 @@ async def my_payouts(
     )
 
 
-# ===================================================================
-#  Admin: moliya
-# ===================================================================
 @router.get(
     "/admin/finance/orders", response_model=Page[OrderView], summary="Barcha buyurtmalar (admin)"
 )

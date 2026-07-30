@@ -61,10 +61,6 @@ export interface ButtonLinkProps
   href: string;
 }
 
-/**
- * Tugma ko'rinishidagi havola — `<button>` ichiga `<a>` joylashtirmaslik uchun
- * (ichma-ich interaktiv elementlar HTML va screen reader uchun noto'g'ri).
- */
 export const ButtonLink = React.forwardRef<HTMLAnchorElement, ButtonLinkProps>(
   ({ className, variant, size, full, href, children, ...props }, ref) => (
     <NextLink

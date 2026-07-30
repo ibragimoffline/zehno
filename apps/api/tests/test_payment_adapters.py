@@ -1,5 +1,3 @@
-"""To'lov adapterlari testlari — imzo tekshiruvi va webhook normallashtirish."""
-
 from __future__ import annotations
 
 import base64
@@ -131,7 +129,7 @@ async def test_payme_checkout_url_encodes_params(monkeypatch):
     decoded = base64.b64decode(encoded).decode()
     assert "m=merchant-1" in decoded
     assert "ac.order_id=order-9" in decoded
-    assert "a=29900000" in decoded  # tiyinda
+    assert "a=29900000" in decoded
 
 
 async def test_mock_provider_full_cycle():

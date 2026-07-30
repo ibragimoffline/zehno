@@ -1,5 +1,3 @@
-"""Commerce sxemalari."""
-
 from __future__ import annotations
 
 import uuid
@@ -85,7 +83,6 @@ class PaymentView(ORMModel):
     created_at: datetime
 
 
-# ------------------------------------------------------------------ kuponlar
 class CouponCreate(BaseModel):
     code: str | None = Field(default=None, max_length=40)
     type: CouponType = CouponType.percent
@@ -124,7 +121,6 @@ class CouponValidateResponse(BaseModel):
     coupon: CouponView | None = None
 
 
-# ------------------------------------------------------------------ B2B
 class BulkEnrollRequest(BaseModel):
     course_ids: list[uuid.UUID] = Field(min_length=1)
     emails: list[EmailStr] = Field(min_length=1, max_length=500)
@@ -139,7 +135,6 @@ class BulkEnrollResult(BaseModel):
     seats_available: int | None = None
 
 
-# ------------------------------------------------------------------ daromad
 class EarningsSummary(BaseModel):
     gross_total: Decimal
     commission_total: Decimal

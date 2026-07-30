@@ -93,7 +93,6 @@ export default function TeacherSettingsPage() {
 
   return (
     <div className="max-w-2xl space-y-6">
-      {/* Profil */}
       <section className="rounded-xl border bg-card p-6">
         <h2 className="flex items-center gap-2 text-lg font-semibold">
           <User className="size-5 text-muted-foreground" /> Profil
@@ -147,7 +146,6 @@ export default function TeacherSettingsPage() {
         </div>
       </section>
 
-      {/* Tashkilot */}
       {organization ? (
         <section className="rounded-xl border bg-card p-6">
           <h2 className="flex items-center gap-2 text-lg font-semibold">
@@ -191,7 +189,6 @@ export default function TeacherSettingsPage() {
         </section>
       ) : null}
 
-      {/* Telegram */}
       <section className="rounded-xl border bg-card p-6">
         <h2 className="flex items-center gap-2 text-lg font-semibold">
           <Send className="size-5 text-muted-foreground" /> Telegram bildirishnomalar

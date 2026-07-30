@@ -1,5 +1,3 @@
-"""SQLAlchemy Declarative Base va umumiy mixinlar."""
-
 from __future__ import annotations
 
 import uuid
@@ -12,8 +10,6 @@ from app.db.types import UUIDType
 
 
 class Base(DeclarativeBase):
-    """Barcha modellar uchun asosiy klass."""
-
     def __repr__(self) -> str:  # pragma: no cover - faqat debug uchun
         pk = getattr(self, "id", None)
         return f"<{type(self).__name__} id={pk}>"

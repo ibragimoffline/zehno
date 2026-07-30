@@ -1,5 +1,3 @@
-"""Progress va quiz sxemalari."""
-
 from __future__ import annotations
 
 import uuid
@@ -26,8 +24,6 @@ class EnrollmentView(ORMModel):
 
 
 class LearnCourseView(BaseModel):
-    """Course Player sahifasi uchun to'liq ma'lumot (FRONTEND_UX_UI 5)."""
-
     enrollment_id: uuid.UUID
     course: CourseCard
     progress_percent: int
@@ -57,15 +53,12 @@ class ProgressUpdateResponse(BaseModel):
     certificate_issued: bool = False
 
 
-# ------------------------------------------------------------------ quiz
 class QuizOption(BaseModel):
     id: str
     text: str
 
 
 class QuizQuestionPublic(BaseModel):
-    """Talabaga yuboriladigan savol — `correct` maydoni YO'Q."""
-
     id: str
     text: str
     type: str = "single"

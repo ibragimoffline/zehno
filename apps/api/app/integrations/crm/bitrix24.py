@@ -1,11 +1,3 @@
-"""Bitrix24 adapteri (Free plan — 12 foydalanuvchigacha, REST webhook orqali).
-
-Sozlash: Bitrix24 portalida "Inbound webhook" yaratiladi va URL `.env` ga
-`BITRIX24_WEBHOOK_URL=https://<portal>.bitrix24.ru/rest/1/<token>/` ko'rinishida
-yoziladi. Adapter `crm.contact.add`, `crm.contact.update`, `crm.company.add`,
-`crm.timeline.comment.add` metodlaridan foydalanadi.
-"""
-
 from __future__ import annotations
 
 import logging
@@ -47,7 +39,6 @@ class Bitrix24Provider(CrmProvider):
             )
         return data
 
-    # ------------------------------------------------------------ company
     async def upsert_company(self, company: CrmCompany) -> str:
         if company.external_id:
             await self._call(
@@ -77,7 +68,6 @@ class Bitrix24Provider(CrmProvider):
         )
         return str(data["result"])
 
-    # ------------------------------------------------------------ contact
     async def upsert_contact(self, contact: CrmContact) -> str:
         fields: dict = {"NAME": contact.full_name, **contact.custom_fields}
         if contact.email:
@@ -91,7 +81,6 @@ class Bitrix24Provider(CrmProvider):
             await self._call("crm.contact.update", {"id": contact.external_id, "fields": fields})
             return contact.external_id
 
-        # Email bo'yicha dublikatni tekshiramiz
         if contact.email:
             found = await self._call(
                 "crm.contact.list",
@@ -109,7 +98,6 @@ class Bitrix24Provider(CrmProvider):
         )
         return str(data["result"])
 
-    # ------------------------------------------------------------ progress
     async def push_progress(self, update: CrmProgressUpdate) -> bool:
         lines = [
             f"📚 Kurs: {update.course_title}",

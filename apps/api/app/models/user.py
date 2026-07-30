@@ -1,5 +1,3 @@
-"""Foydalanuvchi va sessiya (refresh token) modellari."""
-
 from __future__ import annotations
 
 import uuid
@@ -49,11 +47,9 @@ class User(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     email_verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
-    # Telegram bot bilan bog'lanish
     telegram_chat_id: Mapped[str | None] = mapped_column(String(64), index=True)
     telegram_link_code: Mapped[str | None] = mapped_column(String(32), index=True)
 
-    # OAuth
     google_sub: Mapped[str | None] = mapped_column(String(255), unique=True)
 
     organization: Mapped[Organization | None] = relationship(
@@ -79,8 +75,6 @@ class User(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
 
 class RefreshToken(UUIDPrimaryKeyMixin, TimestampMixin, Base):
-    """Refresh tokenlar DB'da hash ko'rinishida saqlanadi (rotation + revoke uchun)."""
-
     __tablename__ = "refresh_tokens"
     __table_args__ = (Index("ix_refresh_tokens_user_active", "user_id", "revoked_at"),)
 

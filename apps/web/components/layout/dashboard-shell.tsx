@@ -15,11 +15,6 @@ export interface SidebarItem {
   exact?: boolean;
 }
 
-/**
- * Chap sidebar bilan universal dashboard karkasi.
- * Teacher, B2B va Super-Admin panellari shu karkasdan foydalanadi
- * (super-admin `theme="admin"` bilan — quyuq "operatsion" uslub).
- */
 export function DashboardShell({
   items,
   title,
@@ -45,7 +40,6 @@ export function DashboardShell({
 
   return (
     <div className="flex min-h-screen bg-muted/20" data-theme={theme === "admin" ? "admin" : undefined}>
-      {/* Sidebar — desktop */}
       <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r bg-card lg:flex">
         {brand ? <div className="border-b p-5">{brand}</div> : null}
         <nav className="flex-1 space-y-1 overflow-y-auto p-3 scrollbar-thin">
@@ -63,7 +57,6 @@ export function DashboardShell({
         </div>
       </aside>
 
-      {/* Sidebar — mobil (drawer) */}
       {open ? (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setOpen(false)} aria-hidden />
@@ -88,7 +81,6 @@ export function DashboardShell({
         </div>
       ) : null}
 
-      {/* Asosiy qism */}
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-30 border-b bg-card/95 backdrop-blur">
           <div className="flex items-center gap-3 px-4 py-3.5 sm:px-6">
@@ -152,7 +144,6 @@ function SidebarLink({
   );
 }
 
-/** KPI kartochkasi — dashboardlarda takrorlanadigan blok */
 export function StatCard({
   label,
   value,

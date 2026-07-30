@@ -1,9 +1,3 @@
-"""Kinescope provayderi — masshtablanish bosqichi uchun (pullik, DRM, analytics).
-
-Adapter pattern tufayli `.env` da `VIDEO_PROVIDER=kinescope` qilish yetarli —
-biznes-logikada hech narsa o'zgarmaydi.
-"""
-
 from __future__ import annotations
 
 import logging

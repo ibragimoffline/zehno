@@ -1,18 +1,3 @@
-"""VideoProvider interfeysi.
-
-`ARCHITECTURE.md` 6.1 dagi TypeScript interfeysining Python ekvivalenti:
-
-```typescript
-export interface VideoProvider {
-  uploadVideo(file, meta): Promise<{videoId, status}>;
-  getPlaybackUrl(videoId, userId): Promise<{url, expiresAt}>;
-  getEmbedCode(videoId): Promise<string>;
-  deleteVideo(videoId): Promise<void>;
-  getUploadStatus(videoId): Promise<'processing'|'ready'|'failed'>;
-}
-```
-"""
-
 from __future__ import annotations
 
 import abc
@@ -48,7 +33,6 @@ class UploadResult:
 class PlaybackUrl:
     url: str
     expires_at: datetime
-    #: HLS manifest bo'lsa `application/x-mpegURL`, mp4 bo'lsa `video/mp4`
     content_type: str = "application/x-mpegURL"
     thumbnail_url: str | None = None
 
@@ -57,21 +41,16 @@ class VideoProvider(IntegrationAdapter, abc.ABC):
     kind = IntegrationKind.video
 
     @abc.abstractmethod
-    async def upload_video(self, file_bytes: bytes, meta: VideoMeta) -> UploadResult:
-        """Videoni provayderga yuklaydi."""
+    async def upload_video(self, file_bytes: bytes, meta: VideoMeta) -> UploadResult: ...
 
     @abc.abstractmethod
-    async def get_playback_url(self, video_id: str, user_id: str) -> PlaybackUrl:
-        """Vaqtinchalik (signed) playback URL qaytaradi — 10-15 daqiqa amal qiladi."""
+    async def get_playback_url(self, video_id: str, user_id: str) -> PlaybackUrl: ...
 
     @abc.abstractmethod
-    async def get_embed_code(self, video_id: str) -> str:
-        """`<iframe>` embed kodi."""
+    async def get_embed_code(self, video_id: str) -> str: ...
 
     @abc.abstractmethod
-    async def delete_video(self, video_id: str) -> None:
-        """Videoni provayderdan o'chiradi."""
+    async def delete_video(self, video_id: str) -> None: ...
 
     @abc.abstractmethod
-    async def get_upload_status(self, video_id: str) -> VideoAssetStatus:
-        """Transkodlash holati."""
+    async def get_upload_status(self, video_id: str) -> VideoAssetStatus: ...

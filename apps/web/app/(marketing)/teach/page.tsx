@@ -15,52 +15,27 @@ import { Accordion } from "@/components/ui/misc";
 export const metadata: Metadata = {
   title: "Ustozlar uchun",
   description:
-    "Zehno.uz'da kursingizni joylang va sotishni boshlang. Sotuvdan 85% sizga, to'lov va sertifikat bizda.",
+    "Kursingizni joylang — sotuvdan 85% sizga.",
 };
 
 const STEPS = [
-  {
-    icon: GraduationCap,
-    title: "1. Ro'yxatdan o'ting",
-    text: "«Ustozman» rolini tanlab hisob ochasiz. O'quv markaz bo'lsangiz tashkilot ham yaratasiz.",
-  },
-  {
-    icon: Upload,
-    title: "2. Kursni quring",
-    text: "Bosqichma-bosqich usta: umumiy ma'lumot → modullar → darslar → narx.",
-  },
-  {
-    icon: Video,
-    title: "3. Video yuklang",
-    text: "Har bir darsga video yuklaysiz — biz transkodlash va himoyalangan streamingni hal qilamiz.",
-  },
-  {
-    icon: CreditCard,
-    title: "4. Sotuvni boshlang",
-    text: "Moderatsiyadan o'tgach kurs katalogda paydo bo'ladi. To'lovlar Payme/Click orqali keladi.",
-  },
+  { icon: GraduationCap, title: "1. Ro'yxatdan o'ting", text: "«Ustozman» rolini tanlang" },
+  { icon: Upload, title: "2. Kursni quring", text: "Modul → dars → narx" },
+  { icon: Video, title: "3. Video yuklang", text: "Transkodlash va streaming bizda" },
+  { icon: CreditCard, title: "4. Sotuvni boshlang", text: "To'lovlar Payme/Click orqali" },
 ];
 
 const FAQ = [
-  {
-    q: "Komissiya qancha?",
-    a: "Har bir sotuvdan platforma 15% komissiya ushlaydi, 85% sizga tushadi. Yashirin to'lovlar yo'q — oylik abonent to'lovi ham talab qilinmaydi.",
-  },
-  {
-    q: "Pulni qanday olaman?",
-    a: "«Daromad» bo'limida balansingizni ko'rasiz va pul yechish so'rovini yuborasiz. Administrator tasdiqlagach karta yoki bank hisobiga o'tkaziladi.",
-  },
+  { q: "Komissiya qancha?", a: "15%. Oylik abonent to'lovi yo'q." },
+  { q: "Pulni qanday olaman?", a: "«Daromad» bo'limidan so'rov yuborasiz, admin tasdiqlaydi." },
   {
     q: "Videolarim himoyalanganmi?",
-    a: "Ha. Video faqat sotib olgan foydalanuvchiga vaqtinchalik (10-15 daqiqa amal qiladigan) signed havola orqali ko'rsatiladi. Havola tarqatilsa ham tez orada ishlamay qoladi.",
+    a: "Ha — faqat sotib olganlarga 10-15 daqiqalik signed havola beriladi.",
   },
-  {
-    q: "Moderatsiya qancha vaqt oladi?",
-    a: "Odatda 1-2 ish kuni. Kurs tavsifi, muqova rasm va videolar to'liq bo'lsa tezroq tasdiqlanadi. Rad etilsa sabab bilan qaytariladi.",
-  },
+  { q: "Moderatsiya qancha vaqt oladi?", a: "Odatda 1-2 ish kuni." },
   {
     q: "Test va sertifikat qo'shsam bo'ladimi?",
-    a: "Ha. Har bir darsga test biriktirasiz (o'tish balli bilan), kurs 100% tugatilganda talabaga QR kodli PDF sertifikat avtomatik generatsiya qilinadi.",
+    a: "Ha — kurs 100% tugatilganda QR kodli PDF sertifikat avtomatik beriladi.",
   },
 ];
 
@@ -73,8 +48,7 @@ export default function TeachPage() {
             Bilimingizni <span className="text-primary">daromadga</span> aylantiring
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground">
-            Kursingizni joylang, biz to&apos;lov, video hosting, sertifikat va marketingni hal
-            qilamiz. Sotuvdan 85% sizga.
+            Sotuvdan 85% sizga — to&apos;lov, video hosting va sertifikat bizda.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <ButtonLink href="/register" size="lg">

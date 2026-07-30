@@ -1,11 +1,3 @@
-"""Sertifikat generatsiyasi: PDF (fpdf2) + QR kod + S3'ga saqlash.
-
-`ARCHITECTURE.md` 9-bo'lim: kurs 100% tugallanganda (barcha darslar + quiz
-passing_score) `CERTIFICATE_ISSUE` job ishga tushadi, PDF generatsiya qilinadi,
-unikal kod + QR biriktiriladi va `/certificates/{code}/verify` orqali istalgan
-kishi haqiqiyligini tekshira oladi.
-"""
-
 from __future__ import annotations
 
 import io
@@ -30,7 +22,6 @@ from app.models.user import User
 
 logger = logging.getLogger(__name__)
 
-# Rang palitrasi (FRONTEND_UX_UI 1.2 bilan mos)
 PRIMARY = (37, 99, 235)
 SECONDARY = (16, 185, 129)
 NEUTRAL_DARK = (15, 23, 42)
@@ -38,8 +29,6 @@ NEUTRAL_MID = (100, 116, 139)
 
 
 class CertificateService:
-    """Sinxron servis — Celery worker'dan chaqirish uchun (`sync_session`)."""
-
     def __init__(self, db: Session) -> None:
         self.db = db
         self.storage = StorageService()
@@ -114,7 +103,6 @@ class CertificateService:
                 return code
         raise ConflictError("Unikal sertifikat kodi yaratib bo'lmadi")
 
-    # ------------------------------------------------------------ PDF
     def render_pdf(
         self,
         *,
@@ -132,7 +120,6 @@ class CertificateService:
 
         width, height = pdf.w, pdf.h
 
-        # Ramka
         pdf.set_draw_color(*PRIMARY)
         pdf.set_line_width(2.0)
         pdf.rect(10, 10, width - 20, height - 20)
@@ -140,7 +127,6 @@ class CertificateService:
         pdf.set_line_width(0.4)
         pdf.rect(14, 14, width - 28, height - 28)
 
-        # Brend
         pdf.set_xy(0, 26)
         pdf.set_font("helvetica", "B", 26)
         pdf.set_text_color(*PRIMARY)
@@ -151,7 +137,6 @@ class CertificateService:
         pdf.set_text_color(*NEUTRAL_MID)
         pdf.cell(width, 6, "Onlayn ta'lim platformasi", align="C")
 
-        # Sarlavha
         pdf.set_xy(0, 54)
         pdf.set_font("helvetica", "B", 30)
         pdf.set_text_color(*NEUTRAL_DARK)
@@ -162,7 +147,6 @@ class CertificateService:
         pdf.set_text_color(*NEUTRAL_MID)
         pdf.cell(width, 6, "Ushbu sertifikat quyidagi shaxsga berildi:", align="C")
 
-        # Talaba ismi
         pdf.set_xy(0, 82)
         pdf.set_font("helvetica", "B", 24)
         pdf.set_text_color(*PRIMARY)
@@ -173,13 +157,11 @@ class CertificateService:
         pdf.set_text_color(*NEUTRAL_MID)
         pdf.cell(width, 6, "quyidagi kursni muvaffaqiyatli tamomlagani uchun:", align="C")
 
-        # Kurs nomi
         pdf.set_xy(30, 110)
         pdf.set_font("helvetica", "B", 17)
         pdf.set_text_color(*NEUTRAL_DARK)
         pdf.multi_cell(width - 60, 9, _latinize(course_title), align="C")
 
-        # Ma'lumot qatori
         hours = duration_seconds // 3600
         info_parts = [f"Ustoz: {_latinize(teacher_name)}"]
         if hours:
@@ -191,12 +173,10 @@ class CertificateService:
         pdf.set_text_color(*NEUTRAL_MID)
         pdf.cell(width, 6, "   |   ".join(info_parts), align="C")
 
-        # QR kod
         qr_image = _qr_png(verification_url)
         qr_path_reader = io.BytesIO(qr_image)
         pdf.image(qr_path_reader, x=width - 52, y=height - 52, w=32, h=32)
 
-        # Sertifikat kodi
         pdf.set_xy(20, height - 40)
         pdf.set_font("courier", "B", 13)
         pdf.set_text_color(*NEUTRAL_DARK)
@@ -224,9 +204,6 @@ def _qr_png(data: str) -> bytes:
     return buffer.getvalue()
 
 
-# fpdf2 ning standart shriftlari (Helvetica) faqat latin-1 ni qo'llab-quvvatlaydi.
-# O'zbek lotin alifbosi latin-1 ga sig'adi, lekin kirill/maxsus belgilar uchun
-# translit qilamiz — aks holda PDF generatsiyasi xato beradi.
 _TRANSLIT = {
     "ў": "o'",
     "Ў": "O'",

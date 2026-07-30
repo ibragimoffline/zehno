@@ -15,58 +15,34 @@ import { Accordion } from "@/components/ui/misc";
 export const metadata: Metadata = {
   title: "Biznes uchun",
   description:
-    "Xodimlaringizni onlayn o'qitishga yozing, progressni kuzating va hisobotlarni CRM tizimingizga ulang.",
+    "Xodimlarni onlayn o'qiting, progressni kuzating, CRM'ga ulang.",
 };
 
 const FEATURES = [
-  {
-    icon: FileSpreadsheet,
-    title: "Bulk enroll (CSV)",
-    text: "Bir vaqtda yuzlab xodimni kursga yozing — CSV yuklaysiz, hisoblar avtomatik ochiladi.",
-  },
-  {
-    icon: BarChart3,
-    title: "Progress nazorati",
-    text: "Har bir xodim bo'yicha tugatilgan darslar, test natijalari va sertifikat holati.",
-  },
-  {
-    icon: RefreshCw,
-    title: "CRM integratsiyasi",
-    text: "Bitrix24 yoki EspoCRM — progress Contact kartochkasiga avtomatik yozib boriladi.",
-  },
-  {
-    icon: Users,
-    title: "Litsenziya o'rinlari",
-    text: "N ta «o'rin» sotib olasiz, xodim ishdan ketsa o'rinni boshqasiga o'tkazasiz.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Sertifikat tekshiruvi",
-    text: "Har bir sertifikat QR kodli — HR bo'limi bir necha soniyada haqiqiyligini tekshiradi.",
-  },
-  {
-    icon: Building2,
-    title: "Hisobotlar",
-    text: "CSV/Excel export, haftalik avtomatik hisobot Telegram yoki email orqali.",
-  },
+  { icon: FileSpreadsheet, title: "Bulk enroll (CSV)", text: "Yuzlab xodimni bir vaqtda" },
+  { icon: BarChart3, title: "Progress nazorati", text: "Darslar, testlar, sertifikatlar" },
+  { icon: RefreshCw, title: "CRM integratsiyasi", text: "Bitrix24 / EspoCRM" },
+  { icon: Users, title: "Litsenziya o'rinlari", text: "O'rinni boshqa xodimga o'tkazish" },
+  { icon: ShieldCheck, title: "Sertifikat tekshiruvi", text: "QR kod orqali" },
+  { icon: Building2, title: "Hisobotlar", text: "CSV/Excel export" },
 ];
 
 const FAQ = [
   {
     q: "Qanday boshlash kerak?",
-    a: "«Biznes» hisobini ochasiz (b2b_manager roli), tashkilotingizni yaratasiz, keyin B2B panelda kurslarni tanlab xodimlarni CSV orqali yozasiz.",
+    a: "Biznes hisobini ochasiz, tashkilot yaratasiz, B2B panelda xodimlarni CSV orqali yozasiz.",
   },
   {
     q: "Xodimlarga parol qanday beriladi?",
-    a: "Bulk enroll paytida yangi hisoblar vaqtinchalik parol bilan ochiladi. Xodim «parolni tiklash» orqali o'z parolini o'rnatadi.",
+    a: "Hisob vaqtinchalik parol bilan ochiladi, xodim uni «parolni tiklash» orqali o'zgartiradi.",
   },
   {
     q: "CRM'ga qanday ma'lumot yuboriladi?",
-    a: "Kontakt (xodim) va kompaniya kartochkalari yaratiladi/yangilanadi, progress 25/50/75/100% bosqichlarida timeline izohi sifatida yoziladi, sertifikat kodi ham qo'shiladi.",
+    a: "Kontakt/kompaniya kartochkasi va progress (25/50/75/100%) hamda sertifikat kodi.",
   },
   {
     q: "O'z kurslarimizni joylash mumkinmi?",
-    a: "Ha. Tashkilot ichki kurslarini yaratib, faqat xodimlaringizga yozilish uchun ochib qo'yishingiz mumkin (org_admin roli orqali).",
+    a: "Ha — org_admin roli orqali tashkilot ichki kurslarini yaratasiz.",
   },
 ];
 
@@ -79,8 +55,7 @@ export default function BusinessPage() {
             Jamoangizni <span className="text-secondary">bir tizimda</span> o&apos;qitng
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground">
-            Xodimlarni kursga yozing, progressni real vaqtda kuzating va natijalarni CRM
-            tizimingizga ulang.
+            Xodimlarni yozing, progressni kuzating, natijalarni CRM&apos;ga ulang.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <ButtonLink href="/register" size="lg" variant="secondary">
@@ -113,8 +88,7 @@ export default function BusinessPage() {
           <div>
             <h2 className="text-2xl sm:text-3xl">CRM bilan integratsiya</h2>
             <p className="mt-3 text-muted-foreground">
-              Platforma har bir muhim hodisada CRM&apos;ga ma&apos;lumot yuboradi — HR bo&apos;limi
-              odatiy ish muhitini o&apos;zgartirmasdan progressni kuzatadi.
+              Har bir muhim hodisa CRM&apos;ga avtomatik yoziladi.
             </p>
             <ul className="mt-5 space-y-2.5">
               {[
@@ -159,8 +133,7 @@ Contact timeline: "Progress: 75%"`}</pre>
           <div className="mt-10 rounded-2xl border bg-card p-7 text-center">
             <h3 className="text-xl font-semibold">Korporativ taklif olish</h3>
             <p className="mt-2 text-sm text-muted-foreground">
-              Xodimlar soni va yo&apos;nalishlarni yozib yuboring — 1 ish kuni ichida taklif
-              tayyorlaymiz.
+              Xodimlar soni va yo&apos;nalishlarni yozib yuboring.
             </p>
             <div className="mt-5 flex flex-wrap justify-center gap-3">
               <ButtonLink href="mailto:b2b@zehno.uz" variant="secondary">

@@ -48,7 +48,6 @@ export default function B2BDashboardPage() {
   };
 
   const downloadReport = () => {
-    // CSV export uchun to'g'ridan-to'g'ri havola (Authorization header bilan fetch)
     const token = tokenStore.get();
     fetch(`${apiBaseUrl()}/b2b/reports/csv`, {
       headers: token ? { Authorization: `Bearer ${token}` } : undefined,
@@ -91,7 +90,6 @@ export default function B2BDashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* Sarlavha */}
       <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
         <div>
           <h2 className="text-xl font-semibold">{data.organization_name}</h2>
@@ -112,7 +110,6 @@ export default function B2BDashboardPage() {
         </div>
       </div>
 
-      {/* KPI */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Xodimlar" value={data.employees_count} icon={Users} tone="primary" />
         <StatCard
@@ -136,7 +133,6 @@ export default function B2BDashboardPage() {
         />
       </div>
 
-      {/* O'rinlar (seats) */}
       {data.seats_purchased > 0 ? (
         <div className="rounded-xl border bg-card p-5">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
@@ -160,7 +156,6 @@ export default function B2BDashboardPage() {
         </div>
       ) : null}
 
-      {/* CRM holati */}
       {data.crm_sync_enabled ? (
         <Alert variant="success" title="CRM integratsiyasi faol">
           Oxirgi muvaffaqiyatli sinxronizatsiya:{" "}
@@ -174,7 +169,6 @@ export default function B2BDashboardPage() {
         </Alert>
       )}
 
-      {/* Xodimlar jadvali */}
       <div className="rounded-xl border bg-card">
         <div className="flex items-center justify-between border-b p-5">
           <h3 className="font-semibold">Xodimlar progressi</h3>

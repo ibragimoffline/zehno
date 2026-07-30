@@ -10,11 +10,6 @@ import { Alert } from "@/components/ui/misc";
 import { api } from "@/lib/api-client";
 import { formatPrice } from "@/lib/utils";
 
-/**
- * Sandbox to'lov sahifasi — `PAYMENT_PROVIDER=mock` bo'lganda ishlaydi.
- * Payme/Click merchant kalitlarisiz ham to'liq oqimni (savat → to'lov → kurs
- * ochilishi → sertifikat) sinab ko'rish imkonini beradi.
- */
 function MockCheckoutForm() {
   const searchParams = useSearchParams();
   const router = useRouter();

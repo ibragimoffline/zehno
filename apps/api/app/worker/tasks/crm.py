@@ -1,9 +1,3 @@
-"""CRM sinxronizatsiya task'lari (B2B nazorat).
-
-`ARCHITECTURE.md` 6.2 dagi oqim:
-    Talaba darsni ko'radi → "progress_updated" event → Queue → CRM
-"""
-
 from __future__ import annotations
 
 import asyncio
@@ -29,7 +23,6 @@ logger = logging.getLogger(__name__)
 
 
 def _run(coro):
-    """Sinxron Celery task ichida async adapterni chaqirish."""
     return asyncio.run(coro)
 
 
@@ -40,7 +33,6 @@ def _run(coro):
     default_retry_delay=60,
 )
 def sync_enrollment_to_crm(self, enrollment_id: str) -> dict:
-    """Yangi enrollment → CRM'da Contact yaratish/yangilash."""
     with sync_session() as db:
         enrollment = db.scalar(
             select(Enrollment)
@@ -124,7 +116,6 @@ def sync_enrollment_to_crm(self, enrollment_id: str) -> dict:
     default_retry_delay=120,
 )
 def sync_progress_to_crm(self, enrollment_id: str) -> dict:
-    """Progress o'zgarganda CRM'ga yozadi (timeline comment / custom field)."""
     with sync_session() as db:
         enrollment = db.scalar(
             select(Enrollment)
@@ -143,7 +134,6 @@ def sync_progress_to_crm(self, enrollment_id: str) -> dict:
         if org is None or not org.crm_sync_enabled:
             return {"skipped": "CRM sinxronizatsiyasi yoqilmagan"}
 
-        # Faqat muhim bosqichlarda yuboramiz — CRM'ni spam qilmaslik uchun
         milestones = {25, 50, 75, 100}
         if enrollment.progress_percent not in milestones:
             return {"skipped": f"progress {enrollment.progress_percent}% — milestone emas"}
@@ -160,7 +150,6 @@ def sync_progress_to_crm(self, enrollment_id: str) -> dict:
             .order_by(CrmSyncLog.created_at.desc())
         )
         if last_contact is None or not last_contact.external_id:
-            # Avval kontaktni yaratamiz
             sync_enrollment_to_crm.delay(enrollment_id)
             return {"deferred": "kontakt hali yaratilmagan"}
 
@@ -209,7 +198,6 @@ def sync_progress_to_crm(self, enrollment_id: str) -> dict:
 
 @celery_app.task(name="app.worker.tasks.crm.sync_organization_to_crm")
 def sync_organization_to_crm(organization_id: str) -> dict:
-    """Qo'lda "sinxronlash" tugmasi — tashkilot va barcha a'zolarini CRM'ga yuboradi."""
     with sync_session() as db:
         org = db.scalar(select(Organization).where(Organization.id == uuid.UUID(organization_id)))
         if org is None:
@@ -293,7 +281,6 @@ def sync_organization_to_crm(organization_id: str) -> dict:
 
 @celery_app.task(name="app.worker.tasks.crm.retry_failed_syncs")
 def retry_failed_syncs(limit: int = 50) -> dict:
-    """Beat: muvaffaqiyatsiz sinxronizatsiyalarni qayta urinish."""
     with sync_session() as db:
         rows = db.scalars(
             select(CrmSyncLog)
@@ -323,7 +310,6 @@ def retry_failed_syncs(limit: int = 50) -> dict:
 
 @celery_app.task(name="app.worker.tasks.crm.sync_certificate_to_crm")
 def sync_certificate_to_crm(certificate_id: str) -> dict:
-    """Sertifikat berilganda CRM'ga yozish."""
     with sync_session() as db:
         certificate = db.scalar(
             select(Certificate)

@@ -1,5 +1,3 @@
-"""ORM → Pydantic konverterlar (kurs kartochkasi, modul/dars daraxti)."""
-
 from __future__ import annotations
 
 import uuid
@@ -74,7 +72,6 @@ def to_lesson_detail(
 
 
 def flatten_lessons(course: Course) -> list[Lesson]:
-    """Kursning barcha darslarini tartib bo'yicha tekis ro'yxatga aylantiradi."""
     lessons: list[Lesson] = []
     for module in sorted(course.modules, key=lambda m: m.order_index):
         lessons.extend(sorted(module.lessons, key=lambda lesson: lesson.order_index))

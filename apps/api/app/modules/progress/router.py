@@ -1,5 +1,3 @@
-"""Progress, Course Player va quiz endpointlari."""
-
 from __future__ import annotations
 
 import uuid
@@ -30,9 +28,6 @@ from app.modules.progress.service import ProgressService, QuizService
 router = APIRouter(tags=["Learning"])
 
 
-# ===================================================================
-#  Enrollmentlar
-# ===================================================================
 @router.get("/enrollments/me", response_model=list[EnrollmentView], summary="Mening kurslarim")
 async def my_enrollments(
     user: CurrentUser,
@@ -65,9 +60,6 @@ async def my_enrollments(
     return result
 
 
-# ===================================================================
-#  Course Player
-# ===================================================================
 @router.get(
     "/learn/{course_id}",
     response_model=LearnCourseView,
@@ -158,9 +150,6 @@ async def update_progress(
     )
 
 
-# ===================================================================
-#  Quiz — talaba
-# ===================================================================
 @router.get("/lessons/{lesson_id}/quiz", response_model=QuizPublic, summary="Testni olish")
 async def get_quiz(lesson_id: uuid.UUID, user: CurrentUser, db: DbSession) -> QuizPublic:
     service = QuizService(db)
@@ -205,7 +194,6 @@ async def submit_quiz(
     quiz_service = QuizService(db)
     attempt, quiz, details = await quiz_service.submit(user, lesson_id, payload.answers)
 
-    # Progressni qayta hisoblaymiz (test o'tilgan bo'lsa dars ham tugadi)
     progress_service = ProgressService(db)
     enrollment = await db.scalar(select(Enrollment).where(Enrollment.id == attempt.enrollment_id))
     certificate_issued = False
@@ -228,9 +216,6 @@ async def submit_quiz(
     )
 
 
-# ===================================================================
-#  Quiz — teacher
-# ===================================================================
 @router.put(
     "/teacher/lessons/{lesson_id}/quiz",
     response_model=dict,

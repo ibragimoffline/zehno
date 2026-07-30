@@ -1,16 +1,12 @@
-"""Alembic muhiti — sinxron (psycopg) engine bilan ishlaydi."""
-
 from __future__ import annotations
 
 from logging.config import fileConfig
 
+from alembic import context
 from sqlalchemy import engine_from_config, pool
 
 import app.models  # noqa: F401, E402
-from alembic import context
 from app.core.config import settings
-
-# Barcha modellarni import qilamiz (autogenerate ular asosida ishlaydi)
 from app.models import Base  # noqa: F401
 
 config = context.config

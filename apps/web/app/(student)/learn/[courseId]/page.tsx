@@ -52,7 +52,6 @@ function LearnContent() {
     [data],
   );
 
-  // Boshlang'ich darsni aniqlaymiz
   React.useEffect(() => {
     if (!data || activeLessonId) return;
     setActiveLessonId(data.current_lesson_id ?? lessons[0]?.id ?? null);
@@ -101,7 +100,6 @@ function LearnContent() {
     [data, progressMutation],
   );
 
-  // Video tugagach 5 sekundlik countdown bilan keyingi darsga o'tish taklifi
   React.useEffect(() => {
     if (autoNext === null) return;
     if (autoNext <= 0) {
@@ -160,9 +158,7 @@ function LearnContent() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background lg:h-screen lg:flex-row lg:overflow-hidden">
-      {/* ===== Asosiy qism ===== */}
       <div className="flex min-w-0 flex-1 flex-col lg:overflow-y-auto scrollbar-thin">
-        {/* Yuqori panel */}
         <header className="sticky top-0 z-20 flex items-center gap-3 border-b bg-card px-4 py-3">
           <Link
             href={`/courses/${data.course.slug}`}
@@ -203,7 +199,6 @@ function LearnContent() {
           </Button>
         </header>
 
-        {/* Pleer / quiz */}
         <div className="p-4">
           {!activeLesson ? (
             <EmptyState title="Dars tanlanmagan" description="Chapdagi ro'yxatdan darsni tanlang." />
@@ -268,7 +263,6 @@ function LearnContent() {
             </Alert>
           )}
 
-          {/* Navigatsiya */}
           <div className="mt-4 flex items-center justify-between gap-3">
             <Button
               variant="outline"
@@ -300,7 +294,6 @@ function LearnContent() {
             </Button>
           </div>
 
-          {/* Tablar */}
           {activeLesson ? (
             <div className="mt-6">
               <Tabs
@@ -376,7 +369,6 @@ function LearnContent() {
         </div>
       </div>
 
-      {/* ===== Sidebar: modullar ===== */}
       <aside
         className={cn(
           "border-l bg-card lg:w-[340px] lg:shrink-0 lg:overflow-y-auto scrollbar-thin",
@@ -435,7 +427,6 @@ function LearnContent() {
         </div>
       </aside>
 
-      {/* Mobil overlay */}
       {sidebarOpen ? (
         <div
           className="fixed inset-0 z-30 bg-black/40 lg:hidden"

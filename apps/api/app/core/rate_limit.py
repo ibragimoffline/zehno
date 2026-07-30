@@ -1,20 +1,3 @@
-"""Rate limiting — Redis'dagi fixed-window hisoblagich, FastAPI dependency sifatida.
-
-Nega dekorator emas? `slowapi` kabi dekoratorlar endpoint signaturasini o'raydi va
-FastAPI body/dependency parametrlarini query parametr deb qabul qilib qoladi. Shu
-sababli limit **dependency** sifatida qo'llanadi:
-
-    @router.post("/login", dependencies=[Depends(auth_rate_limit)])
-
-Redis mavjud bo'lmasa limit jimgina o'tkazib yuboriladi (API ishlashda davom etadi).
-"""
-
-#
-# DIQQAT: bu faylda `from __future__ import annotations` YOZILMAYDI.
-# `RateLimit` — klass asosidagi dependency; FastAPI callable obyekt uchun
-# `__globals__` topa olmaydi va kechiktirilgan (string) annotationlarni hal qila
-# olmaydi — natijada `request: Request` query parametr deb qabul qilinadi.
-#
 import logging
 import time
 from typing import Annotated
@@ -40,7 +23,6 @@ _UNITS = {
 
 
 def parse_rate(rate: str) -> tuple[int, int]:
-    """`"10/minute"` → `(10, 60)`. Xato format bo'lsa `(60, 60)` qaytaradi."""
     try:
         raw_limit, _, raw_unit = rate.strip().partition("/")
         return int(raw_limit), _UNITS[raw_unit.strip().lower()]
@@ -50,7 +32,6 @@ def parse_rate(rate: str) -> tuple[int, int]:
 
 
 def client_identity(request: Request) -> str:
-    """Autentifikatsiya qilingan foydalanuvchi tokeni bo'yicha, aks holda IP bo'yicha."""
     auth = request.headers.get("authorization")
     if auth and auth.lower().startswith("bearer "):
         return f"token:{auth[7:][:48]}"
@@ -62,8 +43,6 @@ def client_identity(request: Request) -> str:
 
 
 class RateLimit:
-    """Qayta ishlatiladigan limit dependency'si."""
-
     def __init__(self, rate: str, scope: str) -> None:
         self.limit, self.window = parse_rate(rate)
         self.scope = scope
@@ -80,7 +59,7 @@ class RateLimit:
             count = await client.incr(key)
             if count == 1:
                 await client.expire(key, self.window + 1)
-        except Exception as exc:  # Redis ishlamasa API to'xtamasligi kerak
+        except Exception as exc:
             logger.debug("Rate limit tekshiruvi o'tkazib yuborildi: %s", exc)
             return
 
@@ -91,10 +70,8 @@ class RateLimit:
             )
 
 
-#: Login/register/refresh kabi sezgir endpointlar uchun qattiqroq limit
 auth_rate_limit = RateLimit(settings.RATE_LIMIT_AUTH, scope="auth")
 
-#: Umumiy limit (og'ir endpointlarga qo'llash uchun)
 default_rate_limit = RateLimit(settings.RATE_LIMIT_DEFAULT, scope="default")
 
 AuthRateLimit = Annotated[None, Depends(auth_rate_limit)]

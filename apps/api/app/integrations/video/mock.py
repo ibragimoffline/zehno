@@ -1,10 +1,3 @@
-"""Mock video provayder — lokal ishlab chiqish va testlar uchun.
-
-Video fayl MinIO/S3'ga yuklanadi va presigned URL orqali beriladi. Bu PeerTube
-o'rnatilmagan holatda ham to'liq oqimni (yuklash → ko'rish → progress) sinab
-ko'rish imkonini beradi.
-"""
-
 from __future__ import annotations
 
 import asyncio
@@ -33,7 +26,6 @@ class MockVideoProvider(VideoProvider):
     async def upload_video(self, file_bytes: bytes, meta: VideoMeta) -> UploadResult:
         video_id = uuid.uuid4().hex
         key = f"videos/{video_id}/{meta.filename or 'video.mp4'}"
-        # boto3 sinxron — event loop'ni bloklamaslik uchun threadpool'da bajaramiz
         await asyncio.to_thread(
             self.storage.put_object, key, file_bytes, content_type=meta.content_type or "video/mp4"
         )
@@ -47,7 +39,6 @@ class MockVideoProvider(VideoProvider):
     async def get_playback_url(self, video_id: str, user_id: str) -> PlaybackUrl:
         key = await asyncio.to_thread(self.storage.find_first, f"videos/{video_id}/")
         if key is None:
-            # Yuklanmagan bo'lsa demo video qaytaramiz (frontend'ni bloklamaslik uchun)
             return PlaybackUrl(
                 url="https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
                 expires_at=datetime.now(UTC)

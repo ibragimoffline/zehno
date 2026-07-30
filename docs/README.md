@@ -7,12 +7,13 @@
 | `FRONTEND_UX_UI.md` | **Boshlang'ich spetsifikatsiya** — dizayn tizimi, sahifalar wireframe'lari, komponent tavsiyalari |
 | `ADDITIONAL_FEATURES.md` | **Boshlang'ich spetsifikatsiya** — Phase 2-4 uchun qo'shimcha funksiyalar va ustuvorlik |
 
-> Uchta spetsifikatsiya fayli loyiha boshlanishida tashqi hujjat sifatida berilgan. Ularni shu
-> papkaga ko'chirib qo'ying — kod ichidagi izohlar ularga havola qiladi (masalan
-> `FRONTEND_UX_UI 7.3` = super-admin integratsiya monitoringi jadvali,
-> `ARCHITECTURE.md 6.1` = video provayder adapteri).
+> Uchta spetsifikatsiya fayli loyiha boshlanishida tashqi hujjat sifatida berilgan.
+> Ularni shu papkaga ko'chirib qo'ying.
+>
+> Kod izohsiz yozilgan (loyiha talabi) — spetsifikatsiya bo'limlari bilan bog'lanish
+> quyidagi jadval orqali ta'minlanadi.
 
-## Kod ichidagi havolalar xaritasi
+## Spetsifikatsiya ↔ kod xaritasi
 
 | Spetsifikatsiya bo'limi | Implementatsiya |
 |---|---|

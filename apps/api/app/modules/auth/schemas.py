@@ -1,5 +1,3 @@
-"""Auth sxemalari."""
-
 from __future__ import annotations
 
 import re
@@ -15,7 +13,6 @@ PHONE_RE = re.compile(r"^\+?998\d{9}$|^\+?\d{9,15}$")
 
 
 def validate_password_strength(value: str) -> str:
-    """Parol talablari — ro'yxatdan o'tish va parol o'zgartirishda birgalikda ishlatiladi."""
     if not any(char.isdigit() for char in value):
         raise ValueError("Parolda kamida bitta raqam bo'lishi kerak")
     if not any(char.isalpha() for char in value):
@@ -66,8 +63,6 @@ class RegisterRequest(BaseModel):
 
 
 class LoginRequest(BaseModel):
-    """Login `email` yoki `phone` orqali amalga oshiriladi."""
-
     login: str = Field(min_length=3, max_length=255, description="Email yoki telefon raqam")
     password: str = Field(min_length=1, max_length=128)
 

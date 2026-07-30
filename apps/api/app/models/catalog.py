@@ -1,5 +1,3 @@
-"""Kurs katalogi modellari: kategoriya, kurs, modul, dars, video asset, sharh."""
-
 from __future__ import annotations
 
 import uuid
@@ -103,17 +101,14 @@ class Course(UUIDPrimaryKeyMixin, TimestampMixin, Base):
         index=True,
     )
 
-    # Kursning "Bu kursda nima bor" bloklari (FRONTEND_UX_UI 4.2)
     what_you_learn: Mapped[list | None] = mapped_column(JSONType)
     requirements: Mapped[list | None] = mapped_column(JSONType)
     target_audience: Mapped[list | None] = mapped_column(JSONType)
 
-    # Sertifikat / ketma-ketlik qoidalari
     has_certificate: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     sequential_progress: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     completion_threshold: Mapped[int] = mapped_column(Integer, default=100, nullable=False)
 
-    # Denormalizatsiya qilingan ko'rsatkichlar (katalogda tez ko'rsatish uchun)
     lessons_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     duration_seconds: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     students_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
@@ -153,8 +148,6 @@ class Course(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
 
 class CourseModule(UUIDPrimaryKeyMixin, TimestampMixin, Base):
-    """Kurs bo'limi (modul). `module` Python'da band so'z bo'lgani uchun `CourseModule`."""
-
     __tablename__ = "modules"
     __table_args__ = (Index("ix_modules_course_order", "course_id", "order_index"),)
 
@@ -190,7 +183,6 @@ class Lesson(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     order_index: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     duration_seconds: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
 
-    # `text` turi uchun kontent, `pdf` uchun fayl havolasi
     text_content: Mapped[str | None] = mapped_column(Text)
     attachments: Mapped[list | None] = mapped_column(JSONType)
 
@@ -230,8 +222,6 @@ class VideoAsset(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
 
 class CourseReview(UUIDPrimaryKeyMixin, TimestampMixin, Base):
-    """Sharh va reyting (ADDITIONAL_FEATURES 8.1 — eng yuqori ROI)."""
-
     __tablename__ = "course_reviews"
     __table_args__ = (UniqueConstraint("course_id", "user_id", name="uq_review_course_user"),)
 
@@ -255,8 +245,6 @@ class CourseReview(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
 
 class ModerationLog(UUIDPrimaryKeyMixin, TimestampMixin, Base):
-    """Kim, qachon, qaysi kursni tasdiqlagani/rad etgani (FRONTEND_UX_UI 7.1)."""
-
     __tablename__ = "moderation_logs"
 
     course_id: Mapped[uuid.UUID] = mapped_column(

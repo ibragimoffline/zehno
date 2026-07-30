@@ -1,9 +1,3 @@
-"""Mock CRM — ichki mini-CRM sifatida (tashqi CRM ulanmagan holatda).
-
-Barcha "sinxronizatsiya" `crm_sync_log` jadvaliga yoziladi, ya'ni B2B dashboard
-va super-admin monitoringi tashqi xizmat bo'lmasa ham ishlaydi.
-"""
-
 from __future__ import annotations
 
 import logging

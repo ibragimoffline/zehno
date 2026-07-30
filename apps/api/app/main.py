@@ -1,9 +1,3 @@
-"""Zehno.uz API — FastAPI ilovasi.
-
-Modulli monolit: har bir domen `app/modules/<name>` ichida, tashqi xizmatlar
-`app/integrations` ichidagi adapterlar orqali (`ARCHITECTURE.md` 4 va 6-bo'limlar).
-"""
-
 from __future__ import annotations
 
 import logging
@@ -14,7 +8,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from sqlalchemy import text
 
-# Barcha modellar mapper konfiguratsiyasidan oldin ro'yxatga olinishi kerak
 import app.models  # noqa: F401
 from app.api.v1.router import api_router
 from app.core.config import settings
@@ -58,7 +51,6 @@ app = FastAPI(
     contact={"name": "Zehno.uz", "url": settings.PUBLIC_WEB_URL},
 )
 
-# ---------------------------------------------------------------- middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
@@ -70,16 +62,13 @@ app.add_middleware(
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 
-# `RateLimitError` (429) `AppError` merosxo'ri — umumiy handler orqali qaytadi
 register_exception_handlers(app)
 
-# ---------------------------------------------------------------- routerlar
 app.include_router(api_router, prefix=settings.API_V1_PREFIX)
 
 
 @app.get("/health", tags=["System"], summary="Healthcheck")
 async def health() -> dict:
-    """Konteyner orkestratsiyasi uchun — DB va Redis holati bilan."""
     db_ok = True
     redis_ok = True
 

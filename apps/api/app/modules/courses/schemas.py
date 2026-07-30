@@ -1,5 +1,3 @@
-"""Kurs katalogi va CMS sxemalari."""
-
 from __future__ import annotations
 
 import uuid
@@ -19,7 +17,6 @@ from app.models.enums import (
 from app.schemas.common import ORMModel
 
 
-# ----------------------------------------------------------------- kategoriya
 class CategoryPublic(ORMModel):
     id: uuid.UUID
     name: str
@@ -38,7 +35,6 @@ class CategoryCreate(BaseModel):
     parent_id: uuid.UUID | None = None
 
 
-# ----------------------------------------------------------------- ustoz
 class CourseOwner(ORMModel):
     id: uuid.UUID
     full_name: str
@@ -46,7 +42,6 @@ class CourseOwner(ORMModel):
     bio: str | None = None
 
 
-# ----------------------------------------------------------------- kurs
 class CourseBase(BaseModel):
     title: str = Field(min_length=3, max_length=200)
     subtitle: str | None = Field(default=None, max_length=300)
@@ -97,8 +92,6 @@ class CourseUpdate(BaseModel):
 
 
 class CourseCard(ORMModel):
-    """Katalog kartochkasi (FRONTEND_UX_UI 4.1)."""
-
     id: uuid.UUID
     title: str
     slug: str
@@ -121,7 +114,6 @@ class CourseCard(ORMModel):
     is_enrolled: bool = False
 
 
-# ----------------------------------------------------------------- dars
 class LessonBase(BaseModel):
     title: str = Field(min_length=1, max_length=200)
     description: str | None = None
@@ -158,8 +150,6 @@ class VideoAssetPublic(ORMModel):
 
 
 class LessonPublic(ORMModel):
-    """Katalogda ko'rinadigan dars (video havolasi YO'Q)."""
-
     id: uuid.UUID
     title: str
     description: str | None = None
@@ -172,8 +162,6 @@ class LessonPublic(ORMModel):
 
 
 class LessonDetail(LessonPublic):
-    """Sotib olgan talaba uchun to'liq dars."""
-
     text_content: str | None = None
     attachments: list[dict] | None = None
     video: VideoAssetPublic | None = None
@@ -183,7 +171,6 @@ class LessonDetail(LessonPublic):
     is_locked: bool = False
 
 
-# ----------------------------------------------------------------- modul
 class ModuleBase(BaseModel):
     title: str = Field(min_length=1, max_length=200)
     description: str | None = None
@@ -222,12 +209,9 @@ class ReorderItem(BaseModel):
 
 
 class ReorderRequest(BaseModel):
-    """Drag & drop natijasi (FRONTEND_UX_UI 6.3)."""
-
     items: list[ReorderItem] = Field(min_length=1)
 
 
-# ----------------------------------------------------------------- to'liq kurs
 class CourseDetail(CourseCard):
     description: str | None = None
     status: CourseStatus
@@ -244,13 +228,6 @@ class CourseDetail(CourseCard):
 
 
 class CourseAdminSummary(CourseCard):
-    """Teacher/admin ro'yxatlari uchun — `modules` YO'Q.
-
-    `modules` maydonini qo'shish uchun modullar va darslar eager-load qilingan
-    bo'lishi shart (async SQLAlchemy lazy-load qila olmaydi), shuning uchun
-    ro'yxat va CRUD javoblarida faqat kurs darajasidagi maydonlar qaytadi.
-    """
-
     description: str | None = None
     status: CourseStatus
     what_you_learn: list[str] | None = None
@@ -269,12 +246,9 @@ class CourseAdminSummary(CourseCard):
 
 
 class CourseAdminDetail(CourseAdminSummary):
-    """Kursni tahrirlash sahifasi uchun — modul/dars daraxti bilan."""
-
     modules: list[ModulePublic] = []
 
 
-# ----------------------------------------------------------------- moderatsiya
 class ModerationDecision(BaseModel):
     comment: str | None = Field(default=None, max_length=1000)
 
@@ -293,7 +267,6 @@ class ModerationLogView(ORMModel):
     created_at: datetime
 
 
-# ----------------------------------------------------------------- sharh
 class ReviewCreate(BaseModel):
     rating: int = Field(ge=1, le=5)
     comment: str | None = Field(default=None, max_length=2000)
@@ -307,10 +280,7 @@ class ReviewPublic(ORMModel):
     user: CourseOwner | None = None
 
 
-# ----------------------------------------------------------------- talabalar
 class TeacherStudentRow(ORMModel):
-    """Ustoz kabinetidagi "Talabalar" jadvali qatori."""
-
     id: uuid.UUID
     user_id: uuid.UUID
     course_id: uuid.UUID

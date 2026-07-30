@@ -20,11 +20,6 @@ import { api } from "@/lib/api-client";
 import { useRequireAuth } from "@/lib/hooks/use-auth";
 import type { PlatformKpi } from "@/lib/types";
 
-/**
- * Super-admin paneli — FRONTEND_UX_UI 7-bo'lim.
- * Alohida route (`/super-admin/*`), alohida layout va **quyuq "operatsion" tema**
- * (`theme="admin"`) — tasodifiy kirishni va vizual chalkashlikni kamaytiradi.
- */
 export default function SuperAdminLayout({ children }: { children: React.ReactNode }) {
   const { user, loading, authorized } = useRequireAuth(["admin"]);
 

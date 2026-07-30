@@ -35,7 +35,6 @@ export default async function CertificateVerifyPage({
     <div className="container-page flex min-h-[70vh] items-center justify-center py-12">
       <div className="w-full max-w-lg">
         <div className="overflow-hidden rounded-2xl border bg-card shadow-card-hover">
-          {/* Yuqori chizig'i */}
           <div className={valid ? "h-1.5 bg-secondary" : "h-1.5 bg-destructive"} />
 
           <div className="p-7">

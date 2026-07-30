@@ -74,7 +74,6 @@ export default function CourseBuilderPage() {
 
   return (
     <div className="space-y-6">
-      {/* Kurs sarlavhasi */}
       <div className="flex flex-col gap-4 rounded-xl border bg-card p-5 sm:flex-row sm:items-center">
         {course.cover_url ? (
           <img
@@ -171,7 +170,6 @@ export default function CourseBuilderPage() {
         <CourseSettings course={course} onSaved={invalidate} />
       )}
 
-      {/* Modul modali */}
       <ModuleModal
         state={moduleModal}
         courseId={courseId}
@@ -179,7 +177,6 @@ export default function CourseBuilderPage() {
         onSaved={invalidate}
       />
 
-      {/* Dars modali */}
       <LessonModal
         state={lessonModal}
         onClose={() => setLessonModal(null)}
@@ -189,7 +186,6 @@ export default function CourseBuilderPage() {
   );
 }
 
-/* ================= Modul bloki ================= */
 function ModuleBlock({
   module,
   index,
@@ -305,7 +301,6 @@ function ModuleBlock({
   );
 }
 
-/* ================= Video yuklash ================= */
 function VideoUploadButton({
   lessonId,
   onUploaded,
@@ -320,7 +315,6 @@ function VideoUploadButton({
     try {
       const formData = new FormData();
       formData.append("file", file);
-      // Katta fayllar uchun oddiy fetch — progressni taxminiy ko'rsatamiz
       const timer = setInterval(
         () => setProgress((value) => Math.min((value ?? 0) + 7, 92)),
         700,
@@ -363,7 +357,6 @@ function VideoUploadButton({
   );
 }
 
-/* ================= Modul modali ================= */
 function ModuleModal({
   state,
   courseId,
@@ -425,7 +418,6 @@ function ModuleModal({
   );
 }
 
-/* ================= Dars modali ================= */
 function LessonModal({
   state,
   onClose,
@@ -544,7 +536,6 @@ function LessonModal({
   );
 }
 
-/* ================= Kurs sozlamalari ================= */
 function CourseSettings({
   course,
   onSaved,

@@ -1,5 +1,3 @@
-"""Kurs katalogi va CMS biznes-logikasi."""
-
 from __future__ import annotations
 
 import logging
@@ -56,8 +54,6 @@ SORT_MAP = {
 
 
 class CatalogService:
-    """Ochiq katalog: qidiruv, filtr, kurs tafsiloti."""
-
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
@@ -195,12 +191,9 @@ class CatalogService:
 
 
 class CourseAuthoringService:
-    """Teacher/org_admin uchun kurs qurish (CMS)."""
-
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
-    # ---------------------------------------------------------- ruxsatlar
     @staticmethod
     def assert_can_edit(user: User, course: Course) -> None:
         if user.role is UserRole.admin:
@@ -226,7 +219,6 @@ class CourseAuthoringService:
         self.assert_can_edit(user, course)
         return course
 
-    # ---------------------------------------------------------- kurs CRUD
     async def create_course(self, user: User, payload: CourseCreate) -> Course:
         if not user.can_create_courses:
             raise PermissionDeniedError("Kurs yaratish uchun ustoz roli kerak")
@@ -277,8 +269,6 @@ class CourseAuthoringService:
         for field, value in data.items():
             setattr(course, field, value)
 
-        # Nashr etilgan kurs tahrirlansa — qayta moderatsiyaga tushmaydi, lekin
-        # narx/kontent o'zgarishi loglanadi (audit uchun `updated_at` yetarli).
         await self.db.commit()
         await self.db.refresh(course, ["owner", "category"])
         return course
@@ -289,7 +279,6 @@ class CourseAuthoringService:
             select(func.count(Enrollment.id)).where(Enrollment.course_id == course.id)
         )
         if enrolled:
-            # Talabalar bor — o'chirmaymiz, arxivlaymiz
             course.status = CourseStatus.archived
             await self.db.commit()
             raise ConflictError(
@@ -321,7 +310,6 @@ class CourseAuthoringService:
         )
         return list(rows.all()), int(total)
 
-    # ---------------------------------------------------------- modul/dars
     async def create_module(
         self, user: User, course_id: uuid.UUID, payload: ModuleCreate
     ) -> CourseModule:
@@ -456,9 +444,7 @@ class CourseAuthoringService:
         await self.db.commit()
         return sorted(by_id.values(), key=lambda lesson: lesson.order_index)
 
-    # ---------------------------------------------------------- statistika
     async def recalculate_course_stats(self, course_id: uuid.UUID) -> None:
-        """`lessons_count` va `duration_seconds` ni qayta hisoblaydi."""
         totals = (
             await self.db.execute(
                 select(
@@ -478,7 +464,6 @@ class CourseAuthoringService:
         course.duration_seconds = int(totals[1] or 0)
         await self.db.commit()
 
-    # ---------------------------------------------------------- moderatsiya
     async def submit_for_review(self, user: User, course_id: uuid.UUID) -> Course:
         course = await self.get_owned_course(user, course_id)
         if course.status in (CourseStatus.pending, CourseStatus.published):
@@ -521,7 +506,6 @@ class CourseAuthoringService:
         if not course.cover_url:
             raise ValidationError("Muqova rasm yuklanishi kerak")
 
-        # Video darslarda video asset bor-yo'qligini tekshiramiz
         missing_video = await self.db.scalar(
             select(func.count(Lesson.id))
             .outerjoin(VideoAsset, VideoAsset.lesson_id == Lesson.id)
@@ -595,8 +579,6 @@ class CourseAuthoringService:
 
 
 class ReviewService:
-    """Sharh va reyting."""
-
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
 

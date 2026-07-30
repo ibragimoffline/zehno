@@ -1,13 +1,3 @@
-"""Yordamchi CLI buyruqlari (Docker entrypoint va lokal ishlab chiqish uchun).
-
-python -m app.cli wait-for-services   # postgres + redis tayyor bo'lishini kutadi
-python -m app.cli migrate             # (kerak bo'lsa generatsiya qilib) migratsiyalarni qo'llaydi
-python -m app.cli ensure-bucket       # MinIO/S3 bucket'ini yaratadi
-python -m app.cli seed                # kategoriya, super-admin, demo kontent
-python -m app.cli create-superadmin   # faqat super-admin
-python -m app.cli reset-db            # DIQQAT: barcha jadvallarni o'chiradi
-"""
-
 from __future__ import annotations
 
 import argparse
@@ -26,13 +16,11 @@ logger = logging.getLogger("app.cli")
 
 
 def wait_for_services(timeout: int = 90) -> int:
-    """Postgres va Redis ko'tarilishini kutadi (Docker Compose uchun)."""
     import psycopg
     import redis
 
     deadline = time.time() + timeout
 
-    # ---- PostgreSQL ----
     dsn = settings.sync_database_url.replace("postgresql+psycopg://", "postgresql://")
     while True:
         try:
@@ -47,7 +35,6 @@ def wait_for_services(timeout: int = 90) -> int:
             logger.info("PostgreSQL kutilmoqda...")
             time.sleep(2)
 
-    # ---- Redis ----
     while True:
         try:
             client = redis.Redis.from_url(settings.redis_dsn, socket_connect_timeout=3)
@@ -66,17 +53,10 @@ def wait_for_services(timeout: int = 90) -> int:
 
 
 def migrate() -> int:
-    """Migratsiyalarni qo'llaydi.
-
-    Birinchi ishga tushirishda (`alembic/versions` bo'sh bo'lsa) modellar asosida
-    boshlang'ich migratsiya avtomatik generatsiya qilinadi — fayl repozitoriyada
-    saqlanib qoladi va keyingi o'zgarishlar unga nisbatan hisoblanadi.
-    """
     from pathlib import Path
 
-    from alembic.config import Config
-
     from alembic import command
+    from alembic.config import Config
 
     api_root = Path(__file__).resolve().parents[1]
     cfg = Config(str(api_root / "alembic.ini"))

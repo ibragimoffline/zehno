@@ -1,5 +1,3 @@
-"""Domen enumlari — DB'da `VARCHAR + CHECK` sifatida saqlanadi (native_enum=False)."""
-
 from __future__ import annotations
 
 from enum import StrEnum

@@ -1,10 +1,3 @@
-"""Xavfsizlik: parol hash, JWT (python-jose) access/refresh tokenlar.
-
-Access token — qisqa muddatli (default 15 daqiqa), `Authorization: Bearer` orqali.
-Refresh token — uzoq muddatli, HttpOnly cookie'da; DB'da faqat SHA-256 hash'i
-saqlanadi va har yangilanishda rotatsiya qilinadi (`refresh_tokens` jadvali).
-"""
-
 from __future__ import annotations
 
 import hashlib
@@ -24,9 +17,7 @@ TokenType = Literal["access", "refresh"]
 _password_hasher = PasswordHasher()
 
 
-# ---------------------------------------------------------------- parollar
 def hash_password(password: str) -> str:
-    """Parolni argon2id bilan hash qiladi (fallback: bcrypt)."""
     if settings.PASSWORD_HASH_SCHEME == "bcrypt":
         import bcrypt
 
@@ -35,11 +26,10 @@ def hash_password(password: str) -> str:
 
 
 def verify_password(password: str, hashed: str | None) -> bool:
-    """Parolni tekshiradi. Hash sxemasi avtomatik aniqlanadi."""
     if not hashed:
         return False
     try:
-        if hashed.startswith("$2"):  # bcrypt
+        if hashed.startswith("$2"):
             import bcrypt
 
             return bcrypt.checkpw(password.encode(), hashed.encode())
@@ -50,7 +40,6 @@ def verify_password(password: str, hashed: str | None) -> bool:
 
 
 def needs_rehash(hashed: str) -> bool:
-    """Argon2 parametrlari o'zgargan bo'lsa — parolni qayta hash qilish kerakmi."""
     if not hashed or hashed.startswith("$2"):
         return False
     try:
@@ -59,7 +48,6 @@ def needs_rehash(hashed: str) -> bool:
         return False
 
 
-# ---------------------------------------------------------------- JWT
 def _now() -> datetime:
     return datetime.now(UTC)
 
@@ -70,7 +58,6 @@ def create_token(
     expires_delta: timedelta,
     extra_claims: dict[str, Any] | None = None,
 ) -> tuple[str, str, datetime]:
-    """JWT yaratadi. Qaytaradi: `(token, jti, expires_at)`."""
     issued_at = _now()
     expires_at = issued_at + expires_delta
     jti = uuid.uuid4().hex
@@ -105,7 +92,6 @@ def create_access_token(
 
 
 def create_refresh_token(subject: str | uuid.UUID) -> tuple[str, str, datetime]:
-    """Qaytaradi: `(token, jti, expires_at)`."""
     return create_token(
         subject,
         "refresh",
@@ -114,7 +100,6 @@ def create_refresh_token(subject: str | uuid.UUID) -> tuple[str, str, datetime]:
 
 
 def decode_token(token: str, expected_type: TokenType | None = None) -> dict[str, Any]:
-    """JWT'ni dekod qiladi. Xato bo'lsa `TokenDecodeError` ko'taradi."""
     try:
         payload = jwt.decode(
             token,
@@ -132,18 +117,14 @@ def decode_token(token: str, expected_type: TokenType | None = None) -> dict[str
     return payload
 
 
-class TokenDecodeError(Exception):
-    """JWT dekodlash/tekshirish xatosi."""
+class TokenDecodeError(Exception): ...
 
 
-# ---------------------------------------------------------------- yordamchi
 def hash_token(token: str) -> str:
-    """Refresh tokenni DB'da saqlash uchun SHA-256 hash."""
     return hashlib.sha256(token.encode()).hexdigest()
 
 
 def generate_code(length: int = 12, *, upper: bool = True) -> str:
-    """Sertifikat kodi / kupon kodi kabi qisqa unikal kodlar."""
     alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
     code = "".join(secrets.choice(alphabet) for _ in range(length))
     return code if upper else code.lower()

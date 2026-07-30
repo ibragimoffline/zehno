@@ -1,5 +1,3 @@
-"""Foydalanuvchilarni boshqarish (super-admin) va ustozning ochiq profili."""
-
 from __future__ import annotations
 
 import uuid
@@ -45,7 +43,6 @@ class TeacherPublic(ORMModel):
     rating_avg: float = 0.0
 
 
-# --------------------------------------------------------------- super-admin
 @router.get(
     "/admin/users",
     response_model=Page[UserAdminView],
@@ -146,7 +143,6 @@ async def block_user(
     )
 
 
-# --------------------------------------------------------------- ochiq
 @router.get("/teachers/{teacher_id}", response_model=TeacherPublic, summary="Ustoz profili")
 async def teacher_profile(teacher_id: uuid.UUID, db: DbSession) -> TeacherPublic:
     user = await db.scalar(

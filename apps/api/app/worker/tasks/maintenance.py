@@ -1,5 +1,3 @@
-"""Texnik xizmat task'lari: healthcheck, tozalash, statistikani qayta hisoblash."""
-
 from __future__ import annotations
 
 import asyncio
@@ -21,7 +19,6 @@ logger = logging.getLogger(__name__)
 
 @celery_app.task(name="app.worker.tasks.maintenance.run_integration_healthchecks")
 def run_integration_healthchecks() -> dict:
-    """Beat (10 daqiqada): barcha adapterlarni tekshirib `integration_statuses` ni yangilaydi."""
     now = datetime.now(UTC)
     results: dict[str, str] = {}
 
@@ -34,7 +31,6 @@ def run_integration_healthchecks() -> dict:
             except Exception as exc:
                 ok, error = False, str(exc)
 
-            # `mock` kabi nomlar bir nechta turda uchraydi — kalit (kind, provider)
             row = db.scalar(
                 select(IntegrationStatus).where(
                     IntegrationStatus.kind == kind,
@@ -76,7 +72,6 @@ def run_integration_healthchecks() -> dict:
 
 @celery_app.task(name="app.worker.tasks.maintenance.cleanup_expired_tokens")
 def cleanup_expired_tokens() -> dict:
-    """Beat (kunlik): muddati tugagan refresh tokenlarni o'chiradi."""
     with sync_session() as db:
         result = db.execute(delete(RefreshToken).where(RefreshToken.expires_at < datetime.now(UTC)))
         db.commit()
@@ -85,7 +80,6 @@ def cleanup_expired_tokens() -> dict:
 
 @celery_app.task(name="app.worker.tasks.maintenance.recalculate_all_course_stats")
 def recalculate_all_course_stats() -> dict:
-    """Qo'lda ishga tushirish uchun: barcha kurslar statistikasini qayta hisoblaydi."""
     with sync_session() as db:
         courses = db.scalars(select(Course)).all()
         for course in courses:

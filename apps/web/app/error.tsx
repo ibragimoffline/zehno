@@ -13,7 +13,6 @@ export default function GlobalError({
   reset: () => void;
 }) {
   React.useEffect(() => {
-    // Production'da bu joyga Sentry kabi monitoring ulanadi (ADDITIONAL_FEATURES 7)
     console.error("Sahifa xatosi:", error);
   }, [error]);
 

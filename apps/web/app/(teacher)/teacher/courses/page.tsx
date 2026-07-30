@@ -55,7 +55,6 @@ export default function TeacherCoursesPage() {
       await queryClient.invalidateQueries({ queryKey: ["teacher-courses"] });
     },
     onError: (error) => {
-      // Talabalari bor kurs arxivlanadi — backend `archived_instead` kodini qaytaradi
       if (error instanceof ApiError && error.code === "archived_instead") {
         toast.warning(error.message);
         setDeleteTarget(null);
@@ -194,7 +193,6 @@ export default function TeacherCoursesPage() {
         />
       )}
 
-      {/* O'chirish tasdig'i */}
       <Modal
         open={Boolean(deleteTarget)}
         onClose={() => setDeleteTarget(null)}

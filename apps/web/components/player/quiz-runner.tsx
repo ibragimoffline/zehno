@@ -112,7 +112,6 @@ export function QuizRunner({
         </div>
       </header>
 
-      {/* Natija */}
       {result ? (
         <Alert variant={result.passed ? "success" : "error"} className="mb-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
@@ -143,7 +142,6 @@ export function QuizRunner({
         </Alert>
       ) : null}
 
-      {/* Savollar */}
       <ol className="space-y-5">
         {quiz.questions.map((question, index) => {
           const multiple = question.type === "multiple";
@@ -207,7 +205,6 @@ export function QuizRunner({
         })}
       </ol>
 
-      {/* Yuborish */}
       {!result ? (
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t pt-5">
           <p className="text-sm text-muted-foreground">

@@ -1,5 +1,3 @@
-"""Kurs katalogi (ochiq), CMS (teacher) va moderatsiya (admin) endpointlari."""
-
 from __future__ import annotations
 
 import uuid
@@ -62,9 +60,6 @@ from app.schemas.common import Message, Page
 router = APIRouter(tags=["Courses"])
 
 
-# ===================================================================
-#  Kategoriyalar
-# ===================================================================
 @router.get("/categories", response_model=list[CategoryPublic], summary="Kategoriyalar")
 async def list_categories(db: DbSession) -> list[CategoryPublic]:
     result = []
@@ -92,9 +87,6 @@ async def create_category(payload: CategoryCreate, _: AdminUser, db: DbSession) 
     return CategoryPublic.model_validate(category)
 
 
-# ===================================================================
-#  Ochiq katalog
-# ===================================================================
 @router.get("/courses", response_model=Page[CourseCard], summary="Kurs katalogi")
 async def list_courses(
     db: DbSession,
@@ -189,9 +181,6 @@ async def add_review(
     return ReviewPublic.model_validate(review)
 
 
-# ===================================================================
-#  Teacher CMS
-# ===================================================================
 @router.get(
     "/teacher/courses",
     response_model=Page[CourseAdminSummary],
@@ -287,7 +276,6 @@ async def submit_course(
     return CourseAdminSummary.model_validate(course)
 
 
-# ---------------------------------------------------------------- modullar
 @router.post(
     "/teacher/courses/{course_id}/modules",
     response_model=ModulePublic,
@@ -329,7 +317,6 @@ async def reorder_modules(
     return [ModulePublic.model_validate(m) for m in modules]
 
 
-# ---------------------------------------------------------------- darslar
 @router.post(
     "/teacher/modules/{module_id}/lessons",
     response_model=LessonPublic,
@@ -371,7 +358,6 @@ async def teacher_students(
     course_id: uuid.UUID | None = None,
     enrollment_status: EnrollmentStatus | None = None,
 ) -> Page[TeacherStudentRow]:
-    """Ustoz faqat o'zi (yoki tashkiloti) egasi bo'lgan kurslardagi talabalarni ko'radi."""
     owned = select(Course.id).where(Course.owner_id == user.id)
     if user.role is UserRole.org_admin and user.organization_id:
         owned = select(Course.id).where(
@@ -420,9 +406,6 @@ async def reorder_lessons(
     return [LessonPublic.model_validate(lesson) for lesson in lessons]
 
 
-# ===================================================================
-#  Moderatsiya (super-admin)
-# ===================================================================
 @router.get(
     "/admin/moderation/pending-courses",
     response_model=Page[CourseAdminSummary],

@@ -1,5 +1,3 @@
-"""CRM sinxronizatsiya loglari (B2B nazorat)."""
-
 from __future__ import annotations
 
 import uuid

@@ -1,5 +1,3 @@
-"""Bunny Stream provayderi — arzon ($0.005/GB), token auth va watermark bilan."""
-
 from __future__ import annotations
 
 import hashlib
@@ -15,7 +13,6 @@ logger = logging.getLogger(__name__)
 
 API_BASE = "https://video.bunnycdn.com/library"
 
-# Bunny video status: 0-4 processing, 3/4 = playable, 5 = failed
 STATUS_MAP = {
     0: VideoAssetStatus.processing,
     1: VideoAssetStatus.processing,
@@ -71,7 +68,6 @@ class BunnyStreamProvider(VideoProvider):
         path = f"/{video_id}/playlist.m3u8"
         url = f"https://{cdn}{path}"
 
-        # Token authentication (agar token kaliti sozlangan bo'lsa)
         if settings.BUNNY_STREAM_TOKEN_KEY:
             expiry = int(expires_at.timestamp())
             raw = f"{settings.BUNNY_STREAM_TOKEN_KEY}{path}{expiry}"

@@ -5,7 +5,6 @@ import * as React from "react";
 
 import { cn, clampPercent } from "@/lib/utils";
 
-// ---------------------------------------------------------------- Progress
 export function Progress({
   value,
   className,
@@ -44,7 +43,6 @@ export function Progress({
   );
 }
 
-// ---------------------------------------------------------------- Skeleton
 export function Skeleton({ className }: { className?: string }) {
   return <div className={cn("skeleton", className)} aria-hidden />;
 }
@@ -79,14 +77,12 @@ export function TableSkeleton({ rows = 5, cols = 4 }: { rows?: number; cols?: nu
   );
 }
 
-// ---------------------------------------------------------------- Spinner
 export function Spinner({ className }: { className?: string }) {
   return (
     <Loader2 className={cn("size-5 animate-spin text-muted-foreground", className)} aria-label="Yuklanmoqda" />
   );
 }
 
-// ---------------------------------------------------------------- Rating
 export function Rating({
   value,
   count,
@@ -122,7 +118,6 @@ export function Rating({
   );
 }
 
-// ---------------------------------------------------------------- Avatar
 export function Avatar({
   name,
   src,
@@ -168,7 +163,6 @@ export function Avatar({
   );
 }
 
-// ---------------------------------------------------------------- Accordion
 export function Accordion({
   title,
   subtitle,
@@ -208,7 +202,6 @@ export function Accordion({
   );
 }
 
-// ---------------------------------------------------------------- Tabs
 export function Tabs({
   tabs,
   active,
@@ -248,7 +241,6 @@ export function Tabs({
   );
 }
 
-// ---------------------------------------------------------------- Empty state
 export function EmptyState({
   icon: Icon,
   title,
@@ -278,7 +270,6 @@ export function EmptyState({
   );
 }
 
-// ---------------------------------------------------------------- Alert
 export function Alert({
   variant = "info",
   title,
@@ -305,7 +296,6 @@ export function Alert({
   );
 }
 
-// ---------------------------------------------------------------- Modal
 export function Modal({
   open,
   onClose,
@@ -360,7 +350,6 @@ export function Modal({
   );
 }
 
-// ---------------------------------------------------------------- Pagination
 export function Pagination({
   page,
   pages,

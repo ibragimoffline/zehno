@@ -28,7 +28,6 @@ export function CourseActions({
   const discount = discountPercent(course.price, course.discount_price);
   const isFree = Number(course.discount_price ?? course.price) <= 0;
 
-  // Sotib olingan bo'lsa — darsga o'tish
   if (course.is_enrolled) {
     return (
       <Button full={!compact} size="lg" onClick={() => router.push(`/learn/${course.id}`)}>
@@ -55,7 +54,6 @@ export function CourseActions({
         router.push(`/learn/${course.id}`);
         return;
       }
-      // To'lov provayderi sahifasiga o'tamiz
       window.location.href = result.checkout_url;
     } catch (error) {
       toast.error(

@@ -60,7 +60,6 @@ export function CourseReviews({
         ) : null}
       </div>
 
-      {/* Sharh qoldirish formasi */}
       {user && isEnrolled ? (
         <div className="mb-6 rounded-xl border bg-card p-5">
           <p className="text-sm font-medium">Kursni baholang</p>
@@ -104,7 +103,6 @@ export function CourseReviews({
         </div>
       ) : null}
 
-      {/* Sharhlar ro'yxati */}
       {isLoading ? (
         <div className="space-y-4">
           {Array.from({ length: 3 }).map((_, index) => (

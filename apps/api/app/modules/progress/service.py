@@ -1,5 +1,3 @@
-"""O'quv progressi va quiz biznes-logikasi."""
-
 from __future__ import annotations
 
 import logging
@@ -29,7 +27,6 @@ class ProgressService:
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
-    # ------------------------------------------------------------ enrollment
     async def list_enrollments(
         self, user: User, status_filter: EnrollmentStatus | None = None
     ) -> list[Enrollment]:
@@ -82,7 +79,6 @@ class ProgressService:
         )
         return list(rows.all())
 
-    # ------------------------------------------------------------ progress
     async def update_progress(
         self,
         user: User,
@@ -109,7 +105,6 @@ class ProgressService:
 
         course = await self.load_course_for_learning(enrollment.course_id)
 
-        # Ketma-ketlik talab qilinsa — oldingi darslar tugatilgan bo'lishi kerak
         if course.sequential_progress and completed:
             await self._assert_previous_completed(enrollment, course, lesson)
 
@@ -120,8 +115,6 @@ class ProgressService:
             )
         )
         if progress is None:
-            # Ustun default'lari faqat INSERT paytida qo'llanadi — Python tomonida
-            # qiymatlarni o'zimiz beramiz, aks holda `None` bilan arifmetika xato beradi
             progress = LessonProgress(
                 enrollment_id=enrollment.id,
                 lesson_id=lesson.id,
@@ -184,7 +177,6 @@ class ProgressService:
         return ordered[index + 1] if index + 1 < len(ordered) else None
 
     async def locked_lesson_ids(self, enrollment: Enrollment, course: Course) -> set[uuid.UUID]:
-        """Ketma-ketlik yoqilgan bo'lsa — hali ochilmagan darslar."""
         if not course.sequential_progress:
             return set()
 
@@ -204,17 +196,12 @@ class ProgressService:
             if blocked:
                 locked.add(lesson.id)
             elif lesson.id not in completed:
-                # Joriy dars ochiq, undan keyingilari qulflanadi
                 blocked = True
         return locked
 
     async def recalculate_enrollment(
         self, enrollment_id: uuid.UUID, course: Course | None = None
     ) -> bool:
-        """Progress foizini qayta hisoblaydi; 100% bo'lsa sertifikat job'ini qo'yadi.
-
-        Qaytaradi: sertifikat generatsiyasi boshlanganini bildiruvchi bayroq.
-        """
         enrollment = await self.db.scalar(
             select(Enrollment)
             .where(Enrollment.id == enrollment_id)
@@ -256,12 +243,10 @@ class ProgressService:
 
         await self.db.commit()
 
-        # Progress CRM'ga sinxronlanadi (B2B nazorat)
         _queue_crm_progress(enrollment.id)
         return certificate_started
 
     async def _required_quizzes_passed(self, enrollment: Enrollment, course: Course) -> bool:
-        """Kursdagi barcha testlar `passing_score` dan o'tilganmi."""
         quiz_ids = [
             lesson.quiz.id
             for lesson in _flatten(course)
@@ -366,7 +351,6 @@ class QuizService:
         )
         self.db.add(attempt)
 
-        # Test o'tilsa — dars ham tugatilgan hisoblanadi
         if attempt.passed:
             progress = await self.db.scalar(
                 select(LessonProgress).where(
@@ -392,7 +376,6 @@ class QuizService:
         return attempt, quiz, details
 
     async def upsert_quiz(self, lesson: Lesson, payload) -> Quiz:
-        """Teacher uchun: darsga test yaratish/tahrirlash."""
         questions = []
         for index, question in enumerate(payload.questions, start=1):
             option_ids = {option.id for option in question.options}
@@ -429,7 +412,6 @@ class QuizService:
         return quiz
 
 
-# ---------------------------------------------------------------- yordamchilar
 def _flatten(course: Course) -> list[Lesson]:
     lessons: list[Lesson] = []
     for module in sorted(course.modules, key=lambda m: m.order_index):

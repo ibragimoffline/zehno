@@ -1,9 +1,3 @@
-"""Telegram Bot API adapteri (doim bepul).
-
-Xabarlar Celery worker orqali navbatga qo'yiladi — asosiy API bloklanmaydi
-(`ARCHITECTURE.md` 6.4).
-"""
-
 from __future__ import annotations
 
 import logging
@@ -51,7 +45,6 @@ class TelegramProvider(NotificationProvider):
         return True
 
     async def get_updates(self, offset: int | None = None, timeout: int = 25) -> list[dict]:
-        """Long-polling — `app.bot.main` workeri uchun."""
         params: dict = {"timeout": timeout}
         if offset is not None:
             params["offset"] = offset

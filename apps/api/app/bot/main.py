@@ -1,12 +1,3 @@
-"""Telegram bot workeri (long-polling).
-
-Vazifasi — foydalanuvchini platforma hisobiga ulash va tez kirish menyusi.
-Barcha *chiqish* xabarlari (eslatma, to'lov, sertifikat) Celery worker orqali
-yuboriladi; bu servis faqat *kirish* buyruqlarini qabul qiladi.
-
-Ishga tushirish:  python -m app.bot.main
-"""
-
 from __future__ import annotations
 
 import asyncio
@@ -14,7 +5,6 @@ import logging
 
 from sqlalchemy import func, select
 
-# Barcha modellar ro'yxatga olinishi kerak (relationship'lar string bo'yicha bog'lanadi)
 import app.models  # noqa: F401
 from app.core.config import settings
 from app.core.logging import setup_logging

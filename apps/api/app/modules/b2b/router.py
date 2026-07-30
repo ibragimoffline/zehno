@@ -1,5 +1,3 @@
-"""B2B (korporativ) dashboard: bulk enroll, xodimlar progressi, hisobotlar, CRM."""
-
 from __future__ import annotations
 
 import csv
@@ -36,7 +34,6 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/b2b", tags=["B2B"])
 
 
-# ------------------------------------------------------------------ sxemalar
 class EmployeeProgress(BaseModel):
     user_id: uuid.UUID
     full_name: str
@@ -88,7 +85,6 @@ class CrmSyncLogView(ORMModel):
     synced_at: datetime | None = None
 
 
-# ------------------------------------------------------------------ helperlar
 async def _resolve_org(db, user: User, org_id: uuid.UUID | None = None) -> Organization:
     target_id = org_id or user.organization_id
     if target_id is None:
@@ -110,7 +106,6 @@ async def _resolve_org(db, user: User, org_id: uuid.UUID | None = None) -> Organ
     return org
 
 
-# ------------------------------------------------------------------ dashboard
 @router.get("/dashboard", response_model=B2BDashboard, summary="B2B dashboard statistikasi")
 async def dashboard(
     user: B2BUser, db: DbSession, organization_id: uuid.UUID | None = None
@@ -262,7 +257,6 @@ async def org_enrollments(
     return Page.build(items, total, pagination.page, pagination.per_page)
 
 
-# ------------------------------------------------------------------ bulk enroll
 @router.post(
     "/bulk-enroll",
     response_model=BulkEnrollResult,
@@ -341,7 +335,6 @@ async def _do_bulk_enroll(
 
     unique_emails = list(dict.fromkeys(email.lower().strip() for email in emails))
 
-    # Seat cheklovi (agar sotib olingan o'rinlar belgilangan bo'lsa)
     seats_used = int(
         await db.scalar(
             select(func.count(func.distinct(Enrollment.user_id))).where(
@@ -402,7 +395,6 @@ async def _do_bulk_enroll(
 
     await db.commit()
 
-    # CRM'ga sinxronlash (fon rejimida)
     if org.crm_sync_enabled:
         try:
             from app.worker.tasks.crm import sync_organization_to_crm
@@ -421,7 +413,6 @@ async def _do_bulk_enroll(
     )
 
 
-# ------------------------------------------------------------------ hisobot
 @router.get("/reports/csv", summary="Progress hisoboti (CSV export)")
 async def export_report(user: B2BUser, db: DbSession, organization_id: uuid.UUID | None = None):
     from fastapi.responses import StreamingResponse
@@ -461,7 +452,6 @@ async def export_report(user: B2BUser, db: DbSession, organization_id: uuid.UUID
     )
 
 
-# ------------------------------------------------------------------ CRM
 @router.post("/crm/sync-now", response_model=Message, summary="CRM bilan qo'lda sinxronizatsiya")
 async def sync_now(
     user: CurrentUser, db: DbSession, organization_id: uuid.UUID | None = None

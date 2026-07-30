@@ -91,7 +91,7 @@ bo'lmaydi.
 
 | Qaror | Sabab |
 |---|---|
-| shadcn/ui CLI o'rniga **qo'lda yozilgan primitivlar** (`components/ui/`) | Aynan shu uslub (Tailwind + CVA + forwardRef), lekin tashqi generatorga bog'liqlik yo'q; barcha komponentlar o'zbek tilida `aria-*` atributlari bilan |
+| shadcn/ui CLI o'rniga **qo'lda yozilgan primitivlar** (`components/ui/`) | Aynan shu uslub (Tailwind + CVA + forwardRef), lekin tashqi generatorga bog'liqlik yo'q; barcha komponentlar `aria-*` atributlari bilan |
 | `next/font` o'rniga **CSS font stack** | Build vaqtida tashqi tarmoqqa bog'liqlik bo'lmasligi uchun (offline build ishlaydi). Inter/Manrope tizimda bo'lsa ishlatiladi, aks holda fallback |
 | `ButtonLink` komponenti | `<button>` ichiga `<a>` joylashtirmaslik uchun (ichma-ich interaktiv elementlar a11y buzadi) |
 | Super-admin uchun `data-theme="admin"` | FRONTEND_UX_UI 7: alohida "operatsion" quyuq tema — hech qanday komponentni dublikat qilmasdan, faqat CSS o'zgaruvchilari orqali |
@@ -117,6 +117,28 @@ bo'lmaydi.
 | To'lovni qaytarish (refund) oqimi | `PaymentProvider.refund()` interfeysi bor, mock'da ishlaydi | Phase 2 |
 
 ---
+
+## 4a. Kod uslubi: izohsiz kod
+
+Loyiha talabiga ko'ra **barcha izohlar va docstring'lar kod fayllaridan olib tashlangan**
+(`.py`, `.ts`, `.tsx`, `.css`, `.mjs` — jami 145 fayl).
+
+Saqlab qolingan yagona istisno — bular izoh emas, **vosita direktivalari**; o'chirilsa
+lint yoki build buziladi:
+
+| Direktiva | Nechta | Nima uchun kerak |
+|---|---|---|
+| `# noqa: F401 / ASYNC110 / UP046` | 10 | `ruff check` o'tishi uchun (ataylab qilingan importlar va sikllar) |
+| `# type: ignore[prop-decorator]` | 6 | pydantic `computed_field` + `property` uchun mypy |
+| `# pragma: no cover` | 1 | `Base.__repr__` test qamrovidan chiqarilgan |
+| `// eslint-disable-next-line react-hooks/exhaustive-deps` | 2 | `next lint` o'tishi uchun (ataylab cheklangan dependency ro'yxati) |
+
+Tegilmagan fayllar (kod emas — konfiguratsiya va hujjat):
+`.env.example`, `docker-compose*.yml`, `Dockerfile`, `alembic.ini`, `alembic/script.py.mako`,
+`*.md`.
+
+> Izohsiz kodda kontekst yo'qolmasligi uchun spetsifikatsiya bo'limlari bilan bog'lanish
+> [docs/README.md](README.md) dagi "Spetsifikatsiya ↔ kod xaritasi" jadvalida saqlanadi.
 
 ## 5. Test qamrovi
 

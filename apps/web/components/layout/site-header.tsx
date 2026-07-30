@@ -71,7 +71,6 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="container-page flex h-16 items-center gap-3">
-        {/* Logo */}
         <Link href="/" className="flex shrink-0 items-center gap-2" aria-label="Zehno.uz bosh sahifa">
           <span className="flex size-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <GraduationCap className="size-5" />
@@ -81,7 +80,6 @@ export function SiteHeader() {
           </span>
         </Link>
 
-        {/* Desktop navigatsiya */}
         <nav className="ml-4 hidden items-center gap-1 lg:flex">
           {NAV_LINKS.map((link) => (
             <Link
@@ -94,7 +92,6 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        {/* Qidiruv */}
         <form onSubmit={submitSearch} className="ml-auto hidden max-w-sm flex-1 md:block">
           <div className="relative">
             <Search
@@ -111,7 +108,6 @@ export function SiteHeader() {
           </div>
         </form>
 
-        {/* O'ng tomon */}
         <div className="ml-auto flex items-center gap-1.5 md:ml-3">
           <Link
             href="/cart"
@@ -209,7 +205,6 @@ export function SiteHeader() {
         </div>
       </div>
 
-      {/* Mobil menyu */}
       {mobileOpen ? (
         <div className="animate-fade-in border-t bg-background lg:hidden">
           <div className="container-page space-y-1 py-3">

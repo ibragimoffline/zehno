@@ -21,7 +21,6 @@ import { Accordion } from "@/components/ui/misc";
 import { api } from "@/lib/api-client";
 import type { Category, CourseCard as CourseCardType } from "@/lib/types";
 
-// Landing SEO uchun ISR — har 5 daqiqada yangilanadi (ARCHITECTURE 5: SSR muhim)
 export const revalidate = 300;
 
 async function loadLandingData() {
@@ -41,52 +40,36 @@ async function loadLandingData() {
 }
 
 const BENEFITS = [
-  {
-    icon: Award,
-    title: "Rasmiy sertifikat",
-    text: "Kursni tugatgach QR kodli sertifikat olasiz — uni istalgan ish beruvchi tekshira oladi.",
-  },
-  {
-    icon: Clock,
-    title: "O'z tezligingizda",
-    text: "Darslarni istalgan vaqtda, istalgan joyda ko'ring. Umrbod kirish huquqi.",
-  },
-  {
-    icon: GraduationCap,
-    title: "Ekspert ustozlar",
-    text: "Har bir kurs moderatsiyadan o'tadi — faqat sifatli kontent katalogga tushadi.",
-  },
-  {
-    icon: Smartphone,
-    title: "Mobil qulaylik",
-    text: "Telefon, planshet, kompyuter — barchasida bir xil qulay interfeys.",
-  },
+  { icon: Award, title: "Rasmiy sertifikat", text: "QR kod orqali tekshiriladi" },
+  { icon: Clock, title: "O'z tezligingizda", text: "Umrbod kirish huquqi" },
+  { icon: GraduationCap, title: "Ekspert ustozlar", text: "Har bir kurs moderatsiyadan o'tadi" },
+  { icon: Smartphone, title: "Mobil qulaylik", text: "Barcha qurilmalarda" },
 ];
 
 const FAQ = [
   {
-    q: "Kursni sotib olgach qancha vaqt kirish huquqim bo'ladi?",
-    a: "Kurslarga umrbod kirish huquqi beriladi. Bir marta sotib olsangiz, materiallar doimo sizda qoladi va ustoz kursni yangilaganda yangilanishlar ham bepul ochiladi.",
+    q: "Kursga qancha vaqt kirish huquqim bo'ladi?",
+    a: "Umrbod. Yangilanishlar ham bepul ochiladi.",
   },
   {
-    q: "To'lovni qanday amalga oshirsam bo'ladi?",
-    a: "Payme, Click va Uzcard/Humo kartalari qo'llab-quvvatlanadi. To'lov tasdiqlangach kurs avtomatik ochiladi va Telegram orqali xabar keladi.",
+    q: "To'lovni qanday amalga oshiraman?",
+    a: "Payme, Click, Uzcard/Humo. To'lovdan keyin kurs avtomatik ochiladi.",
   },
   {
     q: "Sertifikat qanday tekshiriladi?",
-    a: "Har bir sertifikatda unikal kod va QR kod bo'ladi. Ish beruvchi zehno.uz/certificates/KOD manzilida uni bir necha soniyada tekshira oladi.",
+    a: "zehno.uz/certificates/KOD manzilida — QR kod orqali ham.",
   },
   {
-    q: "Men ustozman — kursimni qanday joylashtiraman?",
-    a: "Ro'yxatdan «Ustoz» roli bilan o'tasiz, bosqichma-bosqich ustada kurs yaratasiz (ma'lumot → modullar → video → narx), moderatsiyaga yuborasiz. Tasdiqlangach kurs katalogda paydo bo'ladi.",
+    q: "Kursimni qanday joylashtiraman?",
+    a: "«Ustoz» roli bilan ro'yxatdan o'tasiz, wizard orqali kurs yaratib moderatsiyaga yuborasiz.",
   },
   {
     q: "Kurs pulini qanday olaman?",
-    a: "Har bir sotuvdan platforma komissiyasi (15%) ushlanadi, qolgani sizning balansingizga tushadi. Daromad bo'limidan pul yechish so'rovini yuborasiz.",
+    a: "Sotuvdan 85% balansingizga tushadi, «Daromad» bo'limidan yechib olasiz.",
   },
   {
-    q: "Kompaniyam uchun xodimlarni o'qitmoqchiman. Qanday?",
-    a: "B2B panelida CSV orqali xodimlarni bir vaqtda kursga yozasiz, progressni jadval ko'rinishida kuzatasiz va hisobotlarni Excel/CSV formatida yuklab olasiz. Bitrix24 bilan integratsiya ham mavjud.",
+    q: "Xodimlarimni o'qitsam bo'ladimi?",
+    a: "Ha — B2B panelda CSV orqali yozasiz, progress va hisobotlarni kuzatasiz.",
   },
 ];
 
@@ -95,7 +78,6 @@ export default async function LandingPage() {
 
   return (
     <>
-      {/* ================= HERO ================= */}
       <section className="relative overflow-hidden border-b bg-gradient-to-br from-primary-50 via-background to-secondary/5">
         <div className="container-page grid items-center gap-10 py-16 lg:grid-cols-2 lg:py-24">
           <div>
@@ -108,8 +90,7 @@ export default async function LandingPage() {
             </h1>
 
             <p className="mt-5 max-w-xl text-lg text-muted-foreground">
-              Videodarsliklar, amaliy testlar va rasmiy sertifikat. Eng yaxshi ustozlar va o&apos;quv
-              markazlaridan — bitta platformada.
+              Videodarsliklar, testlar va rasmiy sertifikat — bitta platformada.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
@@ -130,7 +111,6 @@ export default async function LandingPage() {
             </ul>
           </div>
 
-          {/* Hero vizual */}
           <div className="relative hidden lg:block">
             <div className="relative rounded-2xl border bg-card p-6 shadow-card-hover">
               <div className="player-frame flex items-center justify-center bg-gradient-to-br from-primary to-primary-700">
@@ -167,7 +147,6 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* ================= STATISTIKA ================= */}
       <section className="border-b bg-card">
         <div className="container-page grid grid-cols-2 gap-6 py-8 sm:grid-cols-4">
           {[
@@ -189,7 +168,6 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* ================= KATEGORIYALAR ================= */}
       <section className="container-page py-14">
         <div className="mb-7 flex items-end justify-between gap-4">
           <div>
@@ -221,12 +199,11 @@ export default async function LandingPage() {
           </div>
         ) : (
           <p className="rounded-xl border border-dashed p-8 text-center text-muted-foreground">
-            Kategoriyalar hali yuklanmagan. Backend ishga tushgach avtomatik ko&apos;rinadi.
+            Kategoriyalar topilmadi.
           </p>
         )}
       </section>
 
-      {/* ================= MASHHUR KURSLAR ================= */}
       <section className="border-y bg-muted/30 py-14">
         <div className="container-page">
           <div className="mb-7 flex items-end justify-between gap-4">
@@ -252,19 +229,14 @@ export default async function LandingPage() {
             </div>
           ) : (
             <p className="rounded-xl border border-dashed bg-card p-8 text-center text-muted-foreground">
-              Hali nashr etilgan kurslar yo&apos;q. Demo kontent uchun{" "}
-              <code className="font-mono text-xs">python -m app.cli seed</code> ni ishga tushiring.
+              Nashr etilgan kurslar yo&apos;q.
             </p>
           )}
         </div>
       </section>
 
-      {/* ================= NEGA ZEHNO ================= */}
       <section className="container-page py-14">
         <h2 className="text-center text-2xl sm:text-3xl">Nega Zehno.uz?</h2>
-        <p className="mx-auto mt-2 max-w-2xl text-center text-muted-foreground">
-          Ta&apos;lim jarayonining har bir bosqichi o&apos;ylab ishlangan
-        </p>
 
         <div className="mt-9 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {BENEFITS.map((benefit) => (
@@ -279,7 +251,6 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* ================= USTOZ + B2B ================= */}
       <section className="container-page pb-14">
         <div className="grid gap-5 lg:grid-cols-2">
           <div className="rounded-2xl border bg-gradient-to-br from-primary to-primary-700 p-8 text-white">
@@ -288,8 +259,7 @@ export default async function LandingPage() {
             </span>
             <h3 className="text-2xl font-bold">Kursingizni joylang</h3>
             <p className="mt-2.5 max-w-md text-white/85">
-              Ustoz, maktab yoki o&apos;quv markaz bo&apos;lsangiz — bilimingizni pulga aylantiring.
-              Video yuklaysiz, biz to&apos;lov, sertifikat va marketingni hal qilamiz.
+              Siz video yuklaysiz — to&apos;lov, sertifikat va marketing bizda.
             </p>
             <ul className="mt-5 space-y-2 text-sm text-white/90">
               {[
@@ -317,8 +287,7 @@ export default async function LandingPage() {
             </span>
             <h3 className="text-2xl font-bold">Jamoangiz uchun</h3>
             <p className="mt-2.5 max-w-md text-muted-foreground">
-              Xodimlaringizni bir vaqtda o&apos;qitishga yozing, progressni real vaqtda kuzating va
-              hisobotlarni CRM tizimingizga ulang.
+              Xodimlarni yozing, progressni kuzating, CRM&apos;ga ulang.
             </p>
             <ul className="mt-5 space-y-2 text-sm">
               {[
@@ -338,7 +307,6 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* ================= FIKRLAR ================= */}
       <section className="border-y bg-muted/30 py-14">
         <div className="container-page">
           <h2 className="text-center text-2xl sm:text-3xl">Talabalar fikri</h2>
@@ -380,7 +348,6 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* ================= FAQ ================= */}
       <section className="container-page py-14">
         <div className="mx-auto max-w-3xl">
           <h2 className="text-center text-2xl sm:text-3xl">Tez-tez so&apos;raladigan savollar</h2>
@@ -395,13 +362,10 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* ================= CTA ================= */}
       <section className="border-t bg-primary py-14 text-white">
         <div className="container-page text-center">
           <h2 className="text-3xl font-bold">Bugun o&apos;rganishni boshlang</h2>
-          <p className="mx-auto mt-3 max-w-xl text-white/85">
-            Bepul kurslardan boshlang — kredit karta talab qilinmaydi.
-          </p>
+          <p className="mx-auto mt-3 max-w-xl text-white/85">Bepul kurslardan boshlang.</p>
           <div className="mt-7 flex flex-wrap justify-center gap-3">
             <ButtonLink href="/register" size="lg" className="bg-white text-primary hover:bg-white/90">
               Ro&apos;yxatdan o&apos;tish

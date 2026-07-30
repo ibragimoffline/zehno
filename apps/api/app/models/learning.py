@@ -1,5 +1,3 @@
-"""O'quv jarayoni modellari: enrollment, dars progressi, quiz, quiz urinishlari."""
-
 from __future__ import annotations
 
 import uuid
@@ -47,7 +45,6 @@ class Enrollment(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     order_id: Mapped[uuid.UUID | None] = mapped_column(
         UUIDType, ForeignKey("orders.id", ondelete="SET NULL")
     )
-    # B2B bulk-enroll orqali kelgan bo'lsa — qaysi tashkilot nomidan
     organization_id: Mapped[uuid.UUID | None] = mapped_column(
         UUIDType, ForeignKey("organizations.id", ondelete="SET NULL"), index=True
     )
@@ -115,19 +112,6 @@ class LessonProgress(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
 
 class Quiz(UUIDPrimaryKeyMixin, TimestampMixin, Base):
-    """Dars ichidagi test.
-
-    `questions` JSON strukturasi:
-    ```json
-    [
-      {"id": "q1", "text": "Savol?", "type": "single",
-       "options": [{"id": "a", "text": "..."}, {"id": "b", "text": "..."}],
-       "correct": ["a"], "points": 1}
-    ]
-    ```
-    To'g'ri javoblar talabaga hech qachon yuborilmaydi (schema darajasida filtrlanadi).
-    """
-
     __tablename__ = "quizzes"
 
     lesson_id: Mapped[uuid.UUID] = mapped_column(
@@ -136,7 +120,7 @@ class Quiz(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     title: Mapped[str | None] = mapped_column(String(200))
     questions: Mapped[list] = mapped_column(JSONType, nullable=False, default=list)
     passing_score: Mapped[int] = mapped_column(Integer, default=60, nullable=False)
-    max_attempts: Mapped[int] = mapped_column(Integer, default=0, nullable=False)  # 0 = cheksiz
+    max_attempts: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     time_limit_minutes: Mapped[int | None] = mapped_column(Integer)
     shuffle_questions: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 

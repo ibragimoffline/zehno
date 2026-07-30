@@ -30,7 +30,6 @@ export function Badge({ className, variant, ...props }: BadgeProps) {
   return <span className={cn(badgeVariants({ variant }), className)} {...props} />;
 }
 
-/** Kurs holati uchun rangli belgi */
 export function StatusBadge({ status, label }: { status: string; label: string }) {
   const variant: BadgeProps["variant"] =
     status === "published" || status === "paid" || status === "completed" || status === "ok"

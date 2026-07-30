@@ -85,7 +85,6 @@ export default function EarningsPage() {
 
   return (
     <div className="space-y-6">
-      {/* KPI */}
       {isLoading ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {Array.from({ length: 4 }).map((_, index) => (
@@ -123,7 +122,6 @@ export default function EarningsPage() {
         </div>
       )}
 
-      {/* Balans + payout */}
       <div className="flex flex-col items-start justify-between gap-4 rounded-xl border bg-card p-5 sm:flex-row sm:items-center">
         <div>
           <p className="text-sm text-muted-foreground">Yechish uchun mavjud</p>
@@ -139,7 +137,6 @@ export default function EarningsPage() {
         </Button>
       </div>
 
-      {/* Grafik */}
       <div className="rounded-xl border bg-card p-5">
         <h2 className="mb-4 text-lg font-semibold">Oxirgi 30 kun daromadi</h2>
 
@@ -189,7 +186,6 @@ export default function EarningsPage() {
         )}
       </div>
 
-      {/* Payout tarixi */}
       <div className="rounded-xl border bg-card">
         <div className="border-b p-5">
           <h2 className="text-lg font-semibold">Pul yechish so&apos;rovlari</h2>
@@ -238,7 +234,6 @@ export default function EarningsPage() {
         )}
       </div>
 
-      {/* Payout modali */}
       <Modal
         open={payoutOpen}
         onClose={() => setPayoutOpen(false)}

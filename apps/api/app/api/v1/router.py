@@ -1,5 +1,3 @@
-"""v1 API — barcha modul routerlari bitta joyda yig'iladi."""
-
 from __future__ import annotations
 
 from fastapi import APIRouter

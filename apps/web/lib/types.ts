@@ -1,4 +1,3 @@
-// Backend sxemalari bilan mos TypeScript tiplari — manba: apps/api/app/modules/<name>/schemas.py
 
 export type UserRole = "student" | "teacher" | "org_admin" | "b2b_manager" | "admin";
 export type CourseStatus = "draft" | "pending" | "published" | "rejected" | "archived";

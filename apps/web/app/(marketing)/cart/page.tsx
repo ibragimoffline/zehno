@@ -120,7 +120,6 @@ export default function CartPage() {
       <h1 className="mb-6 text-3xl">Savat ({items.length})</h1>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
-        {/* Kurslar */}
         <ul className="space-y-3">
           {items.map((item) => (
             <li key={item.id} className="flex gap-4 rounded-xl border bg-card p-4">
@@ -169,7 +168,6 @@ export default function CartPage() {
           ))}
         </ul>
 
-        {/* Xulosa */}
         <aside className="lg:sticky lg:top-20 lg:self-start">
           <div className="rounded-xl border bg-card p-5 shadow-card">
             <h2 className="text-lg font-semibold">Buyurtma xulosasi</h2>
@@ -191,7 +189,6 @@ export default function CartPage() {
               </div>
             </dl>
 
-            {/* Kupon */}
             <div className="mt-5">
               <label htmlFor="coupon" className="mb-1.5 block text-sm font-medium">
                 Chegirma kuponi
@@ -220,7 +217,6 @@ export default function CartPage() {
               ) : null}
             </div>
 
-            {/* To'lov usuli */}
             <fieldset className="mt-5">
               <legend className="mb-2 text-sm font-medium">To&apos;lov usuli</legend>
               <div className="space-y-1.5">

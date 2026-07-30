@@ -1,5 +1,3 @@
-"""Redis ulanishi — cache va watch-progress buferi uchun."""
-
 from __future__ import annotations
 
 import json
@@ -46,7 +44,6 @@ async def cache_set_json(key: str, value: Any, ttl_seconds: int = 300) -> None:
 
 
 async def cache_delete_prefix(prefix: str) -> int:
-    """Prefiks bo'yicha kalitlarni o'chiradi (katalog cache'ini invalidatsiya qilish)."""
     client = get_redis()
     deleted = 0
     async for key in client.scan_iter(match=f"{prefix}*", count=200):

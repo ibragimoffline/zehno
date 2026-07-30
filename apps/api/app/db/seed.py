@@ -1,8 +1,3 @@
-"""Boshlang'ich ma'lumotlar: kategoriyalar, super-admin, tizim sozlamalari va demo kontent.
-
-Idempotent — bir necha marta ishga tushirsa ham dublikat yaratmaydi.
-"""
-
 from __future__ import annotations
 
 import logging
@@ -12,8 +7,6 @@ from decimal import Decimal
 from slugify import slugify
 from sqlalchemy import func, select
 
-# SQLAlchemy relationship'lari string bo'yicha bog'lanadi — barcha modellar
-# ro'yxatga olinishi uchun paketni to'liq import qilamiz (configure_mappers).
 import app.models  # noqa: F401
 from app.core.config import settings
 from app.core.security import hash_password
@@ -146,14 +139,12 @@ async def ensure_superadmin() -> User | None:
 
 
 async def ensure_demo_content() -> None:
-    """Demo ustoz + o'quv markaz + 3 ta nashr etilgan kurs (frontend'ni sinash uchun)."""
     async with AsyncSessionLocal() as db:
         courses_count = await db.scalar(select(func.count(Course.id)))
         if courses_count and courses_count > 0:
             logger.info("Demo kontent allaqachon mavjud (kurslar: %s)", courses_count)
             return
 
-        # ---- Tashkilot ----
         org = await db.scalar(select(Organization).where(Organization.slug == "zehno-academy"))
         if org is None:
             org = Organization(
@@ -167,7 +158,6 @@ async def ensure_demo_content() -> None:
             db.add(org)
             await db.flush()
 
-        # ---- Ustoz ----
         teacher = await db.scalar(select(User).where(User.email == "ustoz@zehno.uz"))
         if teacher is None:
             teacher = User(
@@ -186,7 +176,6 @@ async def ensure_demo_content() -> None:
             await db.flush()
             org.owner_id = teacher.id
 
-        # ---- Talaba ----
         student = await db.scalar(select(User).where(User.email == "talaba@zehno.uz"))
         if student is None:
             student = User(
@@ -198,7 +187,6 @@ async def ensure_demo_content() -> None:
             )
             db.add(student)
 
-        # ---- B2B menejer ----
         b2b_org = await db.scalar(select(Organization).where(Organization.slug == "demo-tech-llc"))
         if b2b_org is None:
             b2b_org = Organization(
@@ -229,7 +217,6 @@ async def ensure_demo_content() -> None:
 
         await db.commit()
 
-        # ---- Kurslar ----
         it_category = await db.scalar(select(Category).where(Category.slug == "it-va-dasturlash"))
         lang_category = await db.scalar(select(Category).where(Category.slug == "til-organish"))
         design_category = await db.scalar(select(Category).where(Category.slug == "dizayn"))
@@ -424,7 +411,6 @@ async def ensure_demo_content() -> None:
 
                 await db.flush()
 
-                # Oxirgi modulga demo test qo'shamiz
                 if data.get("quiz_after") == module_title:
                     quiz_lesson = Lesson(
                         module_id=module.id,

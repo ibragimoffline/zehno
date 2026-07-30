@@ -88,7 +88,6 @@ export default function RegisterPage() {
         </Link>
       </p>
 
-      {/* Rol tanlash */}
       <div className="mt-5 grid grid-cols-2 gap-2" role="radiogroup" aria-label="Rol tanlash">
         {(
           [

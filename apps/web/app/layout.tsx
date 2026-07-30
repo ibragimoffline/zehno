@@ -13,8 +13,7 @@ export const metadata: Metadata = {
     template: `%s · ${siteName}`,
   },
   description:
-    "Zehno.uz — maktablar, xususiy ustozlar va o'quv markazlari uchun onlayn kurs platformasi. " +
-    "Videodarsliklar, testlar, sertifikatlar va korporativ o'qitish.",
+    "Onlayn kurs platformasi — videodarsliklar, testlar, sertifikatlar va korporativ o'qitish.",
   keywords: [
     "onlayn kurs",
     "onlayn ta'lim",

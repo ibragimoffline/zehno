@@ -5,7 +5,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-/** 250000 → "250 000 so'm" */
 export function formatPrice(value: string | number | null | undefined, currency = "UZS"): string {
   const amount = Number(value ?? 0);
   if (!Number.isFinite(amount)) return "—";
@@ -15,7 +14,6 @@ export function formatPrice(value: string | number | null | undefined, currency 
   return currency === "UZS" ? `${formatted} so'm` : `${formatted} ${currency}`;
 }
 
-/** 1250000 → "1,25 mln" (dashboard KPI kartochkalari uchun) */
 export function formatCompact(value: string | number | null | undefined): string {
   const amount = Number(value ?? 0);
   if (!Number.isFinite(amount)) return "0";
@@ -29,7 +27,6 @@ export function formatNumber(value: number | null | undefined): string {
   return new Intl.NumberFormat("uz-UZ").format(Number(value ?? 0));
 }
 
-/** 5400 → "1 s 30 daq" */
 export function formatDuration(seconds: number | null | undefined): string {
   const total = Math.max(0, Math.floor(Number(seconds ?? 0)));
   if (total === 0) return "0 daq";
@@ -42,7 +39,6 @@ export function formatDuration(seconds: number | null | undefined): string {
   return `${total} sek`;
 }
 
-/** 125 → "2:05" (video pleer taymeri) */
 export function formatTimecode(seconds: number | null | undefined): string {
   const total = Math.max(0, Math.floor(Number(seconds ?? 0)));
   const hours = Math.floor(total / 3600);
@@ -76,7 +72,6 @@ export function formatDateTime(value: string | Date | null | undefined): string 
   }).format(date);
 }
 
-/** "2 daqiqa oldin" ko'rinishidagi nisbiy vaqt */
 export function formatRelative(value: string | Date | null | undefined): string {
   if (!value) return "—";
   const date = typeof value === "string" ? new Date(value) : value;
@@ -157,7 +152,6 @@ export function discountPercent(price: string | number, discount?: string | numb
   return Math.round((1 - sale / base) * 100);
 }
 
-/** Progress bar uchun 0-100 oralig'iga siqish */
 export function clampPercent(value: number | null | undefined): number {
   return Math.min(100, Math.max(0, Math.round(Number(value ?? 0))));
 }

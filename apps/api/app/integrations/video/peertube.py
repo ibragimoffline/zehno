@@ -1,15 +1,3 @@
-"""PeerTube provayderi — MVP uchun asosiy tanlov (bepul, self-hosted, HLS).
-
-Oqim:
-1. `/api/v1/oauth-clients/local` → client_id/client_secret
-2. `/api/v1/users/token` → access_token (parol grant)
-3. `/api/v1/videos/upload` → video yuklash (privacy=private)
-4. `/api/v1/videos/{id}/token` → 10 daqiqalik video file token (signed playback)
-
-Videolar `private` sifatida yuklanadi — faqat token bilan ko'rish mumkin, ya'ni
-havola tarqatilsa ham bir necha daqiqadan keyin ishlamaydi.
-"""
-
 from __future__ import annotations
 
 import logging
@@ -22,13 +10,11 @@ from app.models.enums import VideoAssetStatus
 
 logger = logging.getLogger(__name__)
 
-# PeerTube privacy kodlari
 PRIVACY_PUBLIC = 1
 PRIVACY_UNLISTED = 2
 PRIVACY_PRIVATE = 3
 PRIVACY_INTERNAL = 4
 
-# PeerTube video state kodlari
 STATE_PUBLISHED = 1
 STATE_TO_TRANSCODE = 2
 STATE_TO_IMPORT = 3
@@ -52,7 +38,6 @@ class PeerTubeProvider(VideoProvider):
             settings.PEERTUBE_BASE_URL and settings.PEERTUBE_USERNAME and settings.PEERTUBE_PASSWORD
         )
 
-    # ------------------------------------------------------------ auth
     async def _access_token(self) -> str:
         if self._token and self._token_expires and self._token_expires > datetime.now(UTC):
             return self._token
@@ -86,11 +71,9 @@ class PeerTubeProvider(VideoProvider):
     async def _auth_headers(self) -> dict[str, str]:
         return {"Authorization": f"Bearer {await self._access_token()}"}
 
-    # ------------------------------------------------------------ interfeys
     async def upload_video(self, file_bytes: bytes, meta: VideoMeta) -> UploadResult:
         channel_id = settings.PEERTUBE_CHANNEL_ID
         if not channel_id:
-            # Foydalanuvchining birinchi kanalini avtomatik aniqlaymiz
             me = (
                 await self._request(
                     "GET",
@@ -139,7 +122,6 @@ class PeerTubeProvider(VideoProvider):
     async def get_playback_url(self, video_id: str, user_id: str) -> PlaybackUrl:
         headers = await self._auth_headers()
 
-        # 10 daqiqalik video file token (PeerTube 5+)
         token_response = await self._request(
             "POST", f"{self.base_url}/api/v1/videos/{video_id}/token", headers=headers
         )

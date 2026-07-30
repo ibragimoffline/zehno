@@ -1,9 +1,3 @@
-"""EspoCRM adapteri (to'liq bepul, self-hosted, cheklovsiz foydalanuvchi).
-
-Autentifikatsiya: `X-Api-Key` header. REST endpointlar: `/api/v1/Contact`,
-`/api/v1/Account`, `/api/v1/Note` (stream comment).
-"""
-
 from __future__ import annotations
 
 import logging

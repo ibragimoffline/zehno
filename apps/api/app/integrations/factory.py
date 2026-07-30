@@ -1,13 +1,3 @@
-"""IntegrationFactory — `.env` dagi o'zgaruvchi bo'yicha mos adapterni beradi.
-
-`ARCHITECTURE.md` 6-bo'lim: provayderni almashtirish uchun faqat `.env` o'zgaradi,
-biznes-logikaga tegilmaydi.
-
-    VIDEO_PROVIDER=peertube      → PeerTubeProvider
-    PAYMENT_PROVIDER=payme       → PaymeProvider
-    CRM_PROVIDER=bitrix24        → Bitrix24Provider
-"""
-
 from __future__ import annotations
 
 import logging
@@ -92,7 +82,6 @@ def get_notification_provider() -> NotificationProvider:
 
 
 def all_adapters() -> list[object]:
-    """Super-admin monitoringi uchun barcha faol adapterlar."""
     adapters: list[object] = []
     for getter in (
         get_video_provider,
@@ -108,7 +97,6 @@ def all_adapters() -> list[object]:
 
 
 def reset_cache() -> None:
-    """Testlarda yoki sozlama o'zgarganda cache'ni tozalash."""
     get_video_provider.cache_clear()
     get_payment_provider.cache_clear()
     get_crm_provider.cache_clear()

@@ -1,13 +1,3 @@
-"""Commerce modellari: savat, buyurtma, to'lov, kupon, payout.
-
-`ARCHITECTURE.md` dagi ER-diagrammada `PAYMENTS.enrollment_id` bor edi. Savatda
-bir vaqtda bir nechta kurs bo'lishi mumkinligi uchun bu yerda bir qadam
-normalizatsiya qilingan:
-
-    Cart → Order → OrderItem[]  →  Payment (bitta tranzaksiya)
-                              └→  Enrollment[] (to'lov tasdiqlangach ochiladi)
-"""
-
 from __future__ import annotations
 
 import uuid
@@ -42,8 +32,6 @@ if TYPE_CHECKING:
 
 
 class CartItem(UUIDPrimaryKeyMixin, TimestampMixin, Base):
-    """Savat — foydalanuvchi + kurs bo'yicha unikal."""
-
     __tablename__ = "cart_items"
     __table_args__ = (UniqueConstraint("user_id", "course_id", name="uq_cart_user_course"),)
 
@@ -66,7 +54,6 @@ class Order(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     user_id: Mapped[uuid.UUID] = mapped_column(
         UUIDType, ForeignKey("users.id", ondelete="RESTRICT"), nullable=False, index=True
     )
-    # B2B bulk xarid bo'lsa
     organization_id: Mapped[uuid.UUID | None] = mapped_column(
         UUIDType, ForeignKey("organizations.id", ondelete="SET NULL"), index=True
     )
@@ -87,7 +74,6 @@ class Order(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     coupon_id: Mapped[uuid.UUID | None] = mapped_column(
         UUIDType, ForeignKey("coupons.id", ondelete="SET NULL")
     )
-    # Bulk xarid uchun: qaysi emaillarga enroll qilinadi
     bulk_emails: Mapped[list | None] = mapped_column(JSONType)
 
     paid_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
@@ -118,7 +104,6 @@ class OrderItem(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     course_id: Mapped[uuid.UUID] = mapped_column(
         UUIDType, ForeignKey("courses.id", ondelete="RESTRICT"), nullable=False
     )
-    # Sotuv paytidagi holat "muzlatiladi" (keyin kurs narxi o'zgarsa ham hisobot to'g'ri qoladi)
     course_title: Mapped[str] = mapped_column(String(200), nullable=False)
     unit_price: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=False)
     quantity: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
@@ -168,8 +153,6 @@ class Payment(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
 
 class Coupon(UUIDPrimaryKeyMixin, TimestampMixin, Base):
-    """Kupon/chegirma (ADDITIONAL_FEATURES 3.3)."""
-
     __tablename__ = "coupons"
 
     code: Mapped[str] = mapped_column(String(40), unique=True, index=True, nullable=False)
@@ -181,7 +164,6 @@ class Coupon(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     value: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=False)
     currency: Mapped[str] = mapped_column(String(3), default="UZS", nullable=False)
 
-    # Kimga tegishli: bo'sh bo'lsa — platforma bo'ylab
     owner_id: Mapped[uuid.UUID | None] = mapped_column(
         UUIDType, ForeignKey("users.id", ondelete="CASCADE"), index=True
     )
@@ -200,8 +182,6 @@ class Coupon(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
 
 class PayoutRequest(UUIDPrimaryKeyMixin, TimestampMixin, Base):
-    """Ustoz/markaz daromadini yechish so'rovi (ADDITIONAL_FEATURES 3.2)."""
-
     __tablename__ = "payout_requests"
 
     user_id: Mapped[uuid.UUID] = mapped_column(

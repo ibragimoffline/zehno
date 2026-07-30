@@ -1,5 +1,3 @@
-"""Umumiy Pydantic sxemalar."""
-
 from __future__ import annotations
 
 from math import ceil
@@ -11,8 +9,6 @@ T = TypeVar("T")
 
 
 class ORMModel(BaseModel):
-    """SQLAlchemy obyektidan to'g'ridan-to'g'ri o'qish uchun asos."""
-
     model_config = ConfigDict(from_attributes=True)
 
 

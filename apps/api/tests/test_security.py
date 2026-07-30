@@ -1,5 +1,3 @@
-"""Parol hash va JWT testlari."""
-
 from __future__ import annotations
 
 import time
@@ -45,7 +43,6 @@ def test_refresh_token_type_is_enforced():
     token, jti, _ = create_refresh_token(uuid.uuid4())
     assert len(jti) == 32
 
-    # refresh tokenni access sifatida ishlatib bo'lmaydi
     with pytest.raises(TokenDecodeError):
         decode_token(token, expected_type="access")
 
@@ -71,4 +68,4 @@ def test_tokens_are_unique_per_call():
     first, _ = create_access_token(subject, role="student")
     time.sleep(0.01)
     second, _ = create_access_token(subject, role="student")
-    assert first != second  # jti har xil
+    assert first != second

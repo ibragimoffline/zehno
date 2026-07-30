@@ -4,7 +4,6 @@ import Link from "next/link";
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
-      {/* Chap: forma */}
       <div className="flex flex-col px-5 py-8 sm:px-10">
         <Link href="/" className="flex items-center gap-2 self-start">
           <span className="flex size-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
@@ -32,7 +31,6 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         </p>
       </div>
 
-      {/* O'ng: brend paneli */}
       <aside className="relative hidden flex-col justify-center bg-gradient-to-br from-primary to-primary-900 p-12 text-white lg:flex">
         <h2 className="text-3xl font-bold leading-tight">
           Bilim — eng foydali
@@ -40,8 +38,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           sarmoya
         </h2>
         <p className="mt-4 max-w-md text-white/85">
-          10 000+ talaba Zehno.uz orqali yangi kasb egallaydi, malakasini oshiradi va rasmiy
-          sertifikat oladi.
+          10 000+ talaba Zehno.uz orqali yangi kasb egallaydi.
         </p>
 
         <ul className="mt-8 space-y-3">

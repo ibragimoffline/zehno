@@ -87,7 +87,6 @@ export default function ProfilePage() {
 
       <main id="main-content" className="container-page flex-1 py-8">
         <div className="mx-auto max-w-2xl space-y-6">
-          {/* Sarlavha */}
           <div className="flex items-center gap-4 rounded-xl border bg-card p-5">
             <Avatar name={user.full_name} src={user.avatar_url} size={64} />
             <div className="min-w-0">
@@ -99,7 +98,6 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* Profil */}
           <section className="rounded-xl border bg-card p-6">
             <h2 className="flex items-center gap-2 text-lg font-semibold">
               <User className="size-5 text-muted-foreground" /> Shaxsiy ma&apos;lumotlar
@@ -139,7 +137,6 @@ export default function ProfilePage() {
             </div>
           </section>
 
-          {/* Telegram */}
           <section className="rounded-xl border bg-card p-6">
             <h2 className="flex items-center gap-2 text-lg font-semibold">
               <Send className="size-5 text-muted-foreground" /> Telegram
@@ -167,7 +164,6 @@ export default function ProfilePage() {
             )}
           </section>
 
-          {/* Xavfsizlik */}
           <section className="rounded-xl border bg-card p-6">
             <h2 className="flex items-center gap-2 text-lg font-semibold">
               <KeyRound className="size-5 text-muted-foreground" /> Xavfsizlik

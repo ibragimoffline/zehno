@@ -1,5 +1,3 @@
-"""Loglash sozlamasi (bir xil format, uvicorn loglari bilan mos)."""
-
 from __future__ import annotations
 
 import logging

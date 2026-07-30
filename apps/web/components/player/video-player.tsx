@@ -18,7 +18,6 @@ import type { PlaybackInfo } from "@/lib/types";
 import { cn, formatTimecode } from "@/lib/utils";
 
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 2];
-/** Watch-progress backend'ga har 12 sekundda saqlanadi (FRONTEND_UX_UI 5.3) */
 const SAVE_INTERVAL_MS = 12_000;
 
 export interface VideoPlayerProps {
@@ -53,7 +52,6 @@ export function VideoPlayer({
   const [duration, setDuration] = React.useState(0);
   const [speed, setSpeed] = React.useState(1);
 
-  // ---- Playback URL olish (vaqtinchalik signed URL) ----
   React.useEffect(() => {
     let cancelled = false;
     setLoading(true);
@@ -80,7 +78,6 @@ export function VideoPlayer({
     };
   }, [lessonId]);
 
-  // ---- HLS yoki oddiy mp4 ni ulash ----
   React.useEffect(() => {
     const video = videoRef.current;
     if (!video || !playback) return;
@@ -93,7 +90,6 @@ export function VideoPlayer({
       playback.content_type.includes("mpegURL") || playback.url.includes(".m3u8");
 
     if (isHls && !video.canPlayType("application/vnd.apple.mpegurl")) {
-      // Safari'dan boshqa brauzerlar uchun hls.js
       let destroyed = false;
       import("hls.js")
         .then(({ default: Hls }) => {
@@ -127,7 +123,6 @@ export function VideoPlayer({
     };
   }, [playback]);
 
-  // ---- Progressni davriy saqlash ----
   React.useEffect(() => {
     if (!onProgress) return;
     const timer = setInterval(() => {
@@ -142,7 +137,6 @@ export function VideoPlayer({
     return () => clearInterval(timer);
   }, [onProgress]);
 
-  // Sahifa yopilishi/pauza paytida oxirgi holatni saqlaymiz
   React.useEffect(() => {
     const flush = () => {
       const video = videoRef.current;
@@ -159,7 +153,6 @@ export function VideoPlayer({
     };
   }, [onProgress]);
 
-  // ---- Klaviatura boshqaruvi (FRONTEND_UX_UI 9) ----
   React.useEffect(() => {
     const handler = (event: KeyboardEvent) => {
       const video = videoRef.current;
@@ -260,7 +253,6 @@ export function VideoPlayer({
         onTimeUpdate={(event) => {
           const video = event.currentTarget;
           setCurrentTime(video.currentTime);
-          // Faqat haqiqatda ko'rilgan vaqtni hisoblaymiz (seek qilish hisoblanmaydi)
           const delta = video.currentTime - lastTickRef.current;
           if (delta > 0 && delta < 1.5) watchedRef.current += delta;
           lastTickRef.current = video.currentTime;
@@ -272,7 +264,6 @@ export function VideoPlayer({
         onError={() => setError("Video faylini o'qib bo'lmadi")}
       />
 
-      {/* Boshqaruv paneli */}
       <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-3 opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100 data-[playing=false]:opacity-100"
         data-playing={playing}
       >

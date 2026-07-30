@@ -45,7 +45,6 @@ export function SiteFooter() {
     <footer className="border-t bg-muted/30">
       <div className="container-page py-12">
         <div className="grid gap-10 lg:grid-cols-[1.4fr_repeat(4,1fr)]">
-          {/* Brend bloki */}
           <div>
             <Link href="/" className="flex items-center gap-2">
               <span className="flex size-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
@@ -57,8 +56,7 @@ export function SiteFooter() {
             </Link>
 
             <p className="mt-4 max-w-sm text-sm text-muted-foreground">
-              Maktablar, xususiy ustozlar va o&apos;quv markazlari uchun onlayn ta&apos;lim
-              platformasi. Kursingizni joylang, sotib boshlang.
+              Maktablar, ustozlar va o&apos;quv markazlari uchun onlayn ta&apos;lim platformasi.
             </p>
 
             <div className="mt-5 space-y-2 text-sm text-muted-foreground">

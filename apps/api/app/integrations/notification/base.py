@@ -1,5 +1,3 @@
-"""NotificationProvider interfeysi (Telegram, email, push)."""
-
 from __future__ import annotations
 
 import abc
@@ -24,5 +22,4 @@ class NotificationProvider(IntegrationAdapter, abc.ABC):
     channel: NotificationChannel
 
     @abc.abstractmethod
-    async def send(self, message: NotificationMessage) -> bool:
-        """Xabar yuboradi. Muvaffaqiyatli bo'lsa `True`."""
+    async def send(self, message: NotificationMessage) -> bool: ...

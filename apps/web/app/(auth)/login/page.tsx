@@ -23,7 +23,6 @@ function LoginForm() {
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
 
-  // Allaqachon kirgan bo'lsa — panelga yuboramiz
   React.useEffect(() => {
     if (user) router.replace(next || destinationFor(user.role));
   }, [user, next, router]);
@@ -107,7 +106,6 @@ function LoginForm() {
         </Button>
       </form>
 
-      {/* Demo hisoblar — seed orqali yaratiladi */}
       <div className="mt-8 rounded-lg border border-dashed p-4">
         <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           Demo hisoblar (seed)

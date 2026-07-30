@@ -91,7 +91,6 @@ function CatalogContent() {
         </p>
       </header>
 
-      {/* Qidiruv + saralash */}
       <div className="mb-6 flex flex-col gap-3 sm:flex-row">
         <form
           className="flex-1"
@@ -132,7 +131,6 @@ function CatalogContent() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
-        {/* Filtr paneli */}
         <aside
           className={cn(
             "space-y-6 lg:block",
@@ -259,7 +257,6 @@ function CatalogContent() {
           </FilterGroup>
         </aside>
 
-        {/* Natijalar */}
         <div>
           {isLoading ? (
             <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">

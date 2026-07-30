@@ -8,7 +8,7 @@ import { Accordion } from "@/components/ui/misc";
 export const metadata: Metadata = {
   title: "Narxlar",
   description:
-    "Zehno.uz narxlari: talabalar uchun kurs bo'yicha to'lov, ustozlar uchun 15% komissiya, biznes uchun o'rin (seat) modeli.",
+    "Talabalar uchun kurs narxi, ustozlar uchun 15% komissiya, biznes uchun o'rin modeli.",
 };
 
 const PLANS = [
@@ -63,8 +63,7 @@ export default function PricingPage() {
         <div className="container-page py-14 text-center">
           <h1 className="text-4xl sm:text-5xl">Shaffof narxlar</h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-            Yashirin to&apos;lovlar yo&apos;q. Talabalar faqat kurs uchun, ustozlar faqat sotuvdan
-            komissiya to&apos;laydi.
+            Yashirin to&apos;lovlar yo&apos;q.
           </p>
         </div>
       </section>
@@ -128,15 +127,15 @@ export default function PricingPage() {
             {[
               {
                 q: "Kurs narxini kim belgilaydi?",
-                a: "Ustoz yoki o'quv markaz o'zi belgilaydi. Chegirma narxi ham qo'yish mumkin — katalogda ikkisi ham ko'rinadi.",
+                a: "Ustoz yoki o'quv markaz — chegirma narxi ham qo'yish mumkin.",
               },
               {
                 q: "To'lovni qaytarish mumkinmi?",
-                a: "Ha, sotib olgandan keyin 30 kun ichida (kurs 30% dan kam tugatilgan bo'lsa) pulni qaytarish so'rovini yuborishingiz mumkin.",
+                a: "Ha — 30 kun ichida, kurs 30% dan kam tugatilgan bo'lsa.",
               },
               {
                 q: "B2B narxi qanday hisoblanadi?",
-                a: "O'rin (seat) soni va tanlangan kurslar to'plamiga qarab. 10 o'rindan boshlab chegirma qo'llanadi.",
+                a: "O'rinlar soniga qarab. 10 o'rindan boshlab chegirma.",
               },
             ].map((item, index) => (
               <Accordion key={item.q} title={item.q} defaultOpen={index === 0}>

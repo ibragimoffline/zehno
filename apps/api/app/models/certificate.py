@@ -1,5 +1,3 @@
-"""Sertifikat modeli — unikal kod + QR orqali ochiq tekshirish."""
-
 from __future__ import annotations
 
 import uuid
@@ -29,7 +27,6 @@ class Certificate(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     pdf_object_key: Mapped[str | None] = mapped_column(String(512))
     verification_url: Mapped[str | None] = mapped_column(String(512))
 
-    # Sertifikat berilgan paytdagi ma'lumot "muzlatiladi"
     snapshot: Mapped[dict | None] = mapped_column(JSONType)
 
     issued_at: Mapped[datetime] = mapped_column(

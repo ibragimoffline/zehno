@@ -125,7 +125,6 @@ export default function NewCoursePage() {
 
   return (
     <div className="mx-auto max-w-3xl">
-      {/* Bosqichlar chizig'i */}
       <ol className="mb-7 flex items-center gap-2">
         {STEPS.map((item, index) => (
           <li key={item.id} className="flex flex-1 items-center gap-2">
@@ -162,7 +161,6 @@ export default function NewCoursePage() {
       </ol>
 
       <div className="rounded-xl border bg-card p-6">
-        {/* ===== 1-qadam: umumiy ma'lumot ===== */}
         {step === 1 ? (
           <div className="space-y-5">
             <h2 className="text-xl">Umumiy ma&apos;lumot</h2>
@@ -287,7 +285,6 @@ export default function NewCoursePage() {
           </div>
         ) : null}
 
-        {/* ===== 2-qadam: nima o'rganadi ===== */}
         {step === 2 ? (
           <div className="space-y-6">
             <h2 className="text-xl">Kurs dasturi haqida</h2>
@@ -332,7 +329,6 @@ export default function NewCoursePage() {
           </div>
         ) : null}
 
-        {/* ===== 3-qadam: video sozlamalari ===== */}
         {step === 3 ? (
           <div className="space-y-5">
             <h2 className="text-xl">Kontent sozlamalari</h2>
@@ -376,7 +372,6 @@ export default function NewCoursePage() {
           </div>
         ) : null}
 
-        {/* ===== 4-qadam: narx ===== */}
         {step === 4 ? (
           <div className="space-y-5">
             <h2 className="text-xl">Narx va nashr</h2>
@@ -432,7 +427,6 @@ export default function NewCoursePage() {
           </div>
         ) : null}
 
-        {/* Navigatsiya */}
         <div className="mt-7 flex items-center justify-between gap-3 border-t pt-5">
           <Button
             variant="outline"

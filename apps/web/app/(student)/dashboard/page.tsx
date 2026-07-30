@@ -62,7 +62,6 @@ export default function StudentDashboard() {
           </p>
         </header>
 
-        {/* KPI */}
         <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard
             label="Jami kurslar"
@@ -91,7 +90,6 @@ export default function StudentDashboard() {
           />
         </div>
 
-        {/* Davom etayotgan kurs (birinchi) */}
         {active.length > 0 ? (
           <section className="mb-8 overflow-hidden rounded-2xl border bg-gradient-to-r from-primary-50 to-card">
             <div className="flex flex-col gap-5 p-6 sm:flex-row sm:items-center">
@@ -123,7 +121,6 @@ export default function StudentDashboard() {
           </section>
         ) : null}
 
-        {/* Kurslar ro'yxati */}
         <section>
           <Tabs
             active={tab}
@@ -161,7 +158,6 @@ export default function StudentDashboard() {
           )}
         </section>
 
-        {/* Sertifikatlar */}
         {certificates.length > 0 ? (
           <section className="mt-10">
             <h2 className="mb-4 text-xl">Sertifikatlarim</h2>

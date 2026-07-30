@@ -1,9 +1,3 @@
-"""Bildirishnoma task'lari (Telegram bot + email).
-
-`ARCHITECTURE.md` 6.4: bot alohida worker sifatida ishlaydi, xabar BullMQ/Celery
-job orqali navbatga qo'yiladi — asosiy API bloklanmaydi.
-"""
-
 from __future__ import annotations
 
 import asyncio
@@ -41,7 +35,6 @@ def _send(
     context: dict | None = None,
     buttons: list[dict] | None = None,
 ) -> bool:
-    """Telegram orqali yuboradi va `notification_logs` ga yozadi."""
     log = NotificationLog(
         user_id=user.id if user else None,
         channel=NotificationChannel.telegram,
@@ -186,7 +179,6 @@ def notify_course_moderated(course_id: str, approved: bool, comment: str | None 
 
 @celery_app.task(name="app.worker.tasks.notifications.send_learning_reminders")
 def send_learning_reminders() -> dict:
-    """Beat (kunlik): 3 kundan ortiq faolsiz, tugallanmagan kurslar bo'yicha eslatma."""
     with sync_session() as db:
         threshold = datetime.now(UTC) - timedelta(days=3)
         rows = db.scalars(
@@ -225,7 +217,6 @@ def send_learning_reminders() -> dict:
 
 @celery_app.task(name="app.worker.tasks.notifications.send_weekly_b2b_reports")
 def send_weekly_b2b_reports() -> dict:
-    """Beat (haftalik): B2B menejerlarga xodimlar progressi bo'yicha xulosa."""
     with sync_session() as db:
         orgs = db.scalars(select(Organization).where(Organization.type == "b2b_client")).all()
 

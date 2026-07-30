@@ -1,5 +1,3 @@
-"""Commerce biznes-logikasi: savat, kupon, checkout, webhook, enrollment ochish."""
-
 from __future__ import annotations
 
 import logging
@@ -143,7 +141,6 @@ class CouponService:
         if coupon.min_order_total and subtotal < coupon.min_order_total:
             return None, ZERO, f"Minimal buyurtma summasi: {coupon.min_order_total}"
 
-        # Kupon aniq kursga bog'langan bo'lsa — faqat shu kurs narxiga qo'llanadi
         base = subtotal
         if coupon.course_id:
             matched = [c for c in courses if c.id == coupon.course_id]
@@ -207,7 +204,6 @@ class CheckoutService:
                 )
             )
 
-        # ---- Bepul kurslar: to'lovsiz darhol ochiladi ----
         if total <= ZERO:
             order.status = OrderStatus.paid
             order.paid_at = datetime.now(UTC)
@@ -224,7 +220,6 @@ class CheckoutService:
             await self.db.refresh(order, ["items"])
             return order, payment, f"{settings.PUBLIC_WEB_URL}/dashboard?order={order.order_number}"
 
-        # ---- To'lovli: provayder invoysi ----
         provider = get_payment_provider(payload.provider)
         invoice = await provider.create_invoice(
             InvoiceRequest(
@@ -303,7 +298,6 @@ class CheckoutService:
 
         return courses
 
-    # ------------------------------------------------------------ webhook
     async def handle_webhook(self, provider_name: str, payload: dict, headers: dict) -> dict:
         provider = get_payment_provider(provider_name)
         result: WebhookResult = await provider.parse_webhook(payload, headers)
@@ -362,11 +356,9 @@ class CheckoutService:
         if result.should_fulfill:
             await self.fulfill_order(order.id)
 
-    # ------------------------------------------------------------ fulfilment
     async def fulfill_order(
         self, order_id: uuid.UUID, source: EnrollmentSource = EnrollmentSource.individual
     ) -> list[Enrollment]:
-        """To'lov tasdiqlangach kursga kirishni ochadi (idempotent)."""
         order = await self.db.scalar(
             select(Order)
             .where(Order.id == order_id)
@@ -405,7 +397,6 @@ class CheckoutService:
         if order.coupon:
             order.coupon.redemptions_count += 1
 
-        # Savatni tozalaymiz
         course_ids = [item.course_id for item in order.items]
         for cart_item in (
             await self.db.scalars(
@@ -418,7 +409,6 @@ class CheckoutService:
 
         await self.db.commit()
 
-        # Bildirishnoma + CRM sinxronizatsiyasi (fon rejimida)
         if created:
             _queue_post_purchase_jobs(order, created)
 
@@ -427,7 +417,6 @@ class CheckoutService:
 
 
 def _queue_post_purchase_jobs(order: Order, enrollments: list[Enrollment]) -> None:
-    """Celery job'larni navbatga qo'yadi (import lokal — sirkulyar bog'liqlik yo'q)."""
     try:
         from app.worker.tasks.crm import sync_enrollment_to_crm
         from app.worker.tasks.notifications import notify_payment_success
@@ -435,13 +424,11 @@ def _queue_post_purchase_jobs(order: Order, enrollments: list[Enrollment]) -> No
         notify_payment_success.delay(str(order.id))
         for enrollment in enrollments:
             sync_enrollment_to_crm.delay(str(enrollment.id))
-    except Exception as exc:  # broker mavjud bo'lmasa oqim to'xtamasligi kerak
+    except Exception as exc:
         logger.warning("Celery job navbatga qo'yilmadi: %s", exc)
 
 
 class EarningsService:
-    """Ustoz/tashkilot daromadi (ADDITIONAL_FEATURES 3.2)."""
-
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
 

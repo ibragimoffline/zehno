@@ -1,12 +1,3 @@
-"""Click Merchant API adapteri (Prepare / Complete oqimi).
-
-Click ikki bosqichda ishlaydi:
-1. **Prepare** (`action=0`) — buyurtma mavjudligi va summasi tekshiriladi.
-2. **Complete** (`action=1`) — to'lov yakunlanadi, kursga kirish ochiladi.
-
-Imzo (`sign_string`) MD5 orqali tekshiriladi.
-"""
-
 from __future__ import annotations
 
 import hashlib
@@ -28,7 +19,6 @@ logger = logging.getLogger(__name__)
 ACTION_PREPARE = 0
 ACTION_COMPLETE = 1
 
-# Click xato kodlari
 ERR_SUCCESS = 0
 ERR_SIGN_CHECK_FAILED = -1
 ERR_INCORRECT_AMOUNT = -2
@@ -60,7 +50,6 @@ class ClickProvider(PaymentProvider):
         checkout_url = f"{settings.CLICK_CHECKOUT_URL.rstrip('/')}/?{urlencode(params)}"
         return InvoiceResult(checkout_url=checkout_url, provider_meta=params)
 
-    # ------------------------------------------------------------ imzo
     def _verify_sign(self, payload: dict) -> bool:
         secret = settings.CLICK_SECRET_KEY or ""
         action = str(payload.get("action", ""))
@@ -83,7 +72,7 @@ class ClickProvider(PaymentProvider):
 
     async def parse_webhook(self, payload: dict, headers: dict[str, str]) -> WebhookResult:
         click_trans_id = payload.get("click_trans_id")
-        merchant_trans_id = payload.get("merchant_trans_id")  # bizning order_id
+        merchant_trans_id = payload.get("merchant_trans_id")
         action = int(payload.get("action", -1))
         amount = Decimal(str(payload.get("amount", "0")))
 

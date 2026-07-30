@@ -1,5 +1,3 @@
-"""FastAPI dependency'lari: DB sessiya, joriy foydalanuvchi, RBAC guardlar, pagination."""
-
 from __future__ import annotations
 
 import uuid
@@ -48,18 +46,12 @@ async def _user_from_token(db: AsyncSession, token: str) -> User:
 
 
 async def get_current_user(db: DbSession, creds: BearerCreds) -> User:
-    """Majburiy autentifikatsiya."""
     if creds is None or not creds.credentials:
         raise AuthenticationError()
     return await _user_from_token(db, creds.credentials)
 
 
 async def get_current_user_optional(db: DbSession, creds: BearerCreds) -> User | None:
-    """Ixtiyoriy autentifikatsiya — katalog kabi ochiq endpointlar uchun.
-
-    Token bo'lsa foydalanuvchini qaytaradi (masalan "sotib olingan" belgisini
-    ko'rsatish uchun), bo'lmasa `None`.
-    """
     if creds is None or not creds.credentials:
         return None
     try:
@@ -73,10 +65,6 @@ OptionalUser = Annotated[User | None, Depends(get_current_user_optional)]
 
 
 def require_roles(*roles: UserRole) -> Callable[[User], Awaitable[User]]:
-    """RBAC guard: `Depends(require_roles(UserRole.teacher, UserRole.admin))`.
-
-    `admin` roli har doim ruxsat etiladi (super-admin barcha huquqlarga ega).
-    """
     allowed: Sequence[UserRole] = (*roles, UserRole.admin)
 
     async def _guard(user: CurrentUser) -> User:
@@ -89,7 +77,6 @@ def require_roles(*roles: UserRole) -> Callable[[User], Awaitable[User]]:
     return _guard
 
 
-# Tez-tez ishlatiladigan guardlar
 require_admin = require_roles(UserRole.admin)
 require_teacher = require_roles(UserRole.teacher, UserRole.org_admin)
 require_org_admin = require_roles(UserRole.org_admin)

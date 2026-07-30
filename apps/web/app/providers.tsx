@@ -16,7 +16,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
             staleTime: 60_000,
             refetchOnWindowFocus: false,
             retry: (failureCount, error) => {
-              // 4xx xatolarni qayta urinmaymiz
               if (error instanceof ApiError && error.status >= 400 && error.status < 500) {
                 return false;
               }

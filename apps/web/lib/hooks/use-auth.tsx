@@ -29,7 +29,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = React.useState<User | null>(null);
   const [loading, setLoading] = React.useState(true);
 
-  // Boshlang'ich holat: localStorage'dagi keshdan ko'rsatamiz, keyin serverdan tekshiramiz
   React.useEffect(() => {
     const cached = tokenStore.getUser<User>();
     if (cached) setUser(cached);
@@ -105,10 +104,6 @@ export function useAuth(): AuthContextValue {
   return context;
 }
 
-/**
- * Sahifani rol bo'yicha himoyalash (client-side guard).
- * Super-admin paneli uchun `/super-admin/*` layout'ida ishlatiladi.
- */
 export function useRequireAuth(roles?: UserRole[], redirectTo = "/login") {
   const { user, loading } = useAuth();
   const router = useRouter();

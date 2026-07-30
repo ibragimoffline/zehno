@@ -1,10 +1,3 @@
-"""Video yuklash (teacher) va himoyalangan playback (talaba) endpointlari.
-
-Video ruxsati: playback URL faqat kursga yozilgan foydalanuvchiga (yoki dars
-`is_preview=True` bo'lsa hammaga) beriladi va 10-15 daqiqada tugaydi
-(`ARCHITECTURE.md` 6.1, 10-bo'lim).
-"""
-
 from __future__ import annotations
 
 import logging
@@ -31,8 +24,8 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["Media"])
 
-MAX_VIDEO_BYTES = 2 * 1024 * 1024 * 1024  # 2 GB
-MAX_FILE_BYTES = 50 * 1024 * 1024  # 50 MB (PDF/rasm)
+MAX_VIDEO_BYTES = 2 * 1024 * 1024 * 1024
+MAX_FILE_BYTES = 50 * 1024 * 1024
 ALLOWED_VIDEO_TYPES = {
     "video/mp4",
     "video/quicktime",
@@ -68,9 +61,6 @@ class UploadedFileResponse(BaseModel):
     content_type: str
 
 
-# ===================================================================
-#  Teacher: video yuklash
-# ===================================================================
 @router.post(
     "/lessons/{lesson_id}/video",
     response_model=VideoAssetPublic,
@@ -132,7 +122,6 @@ async def upload_lesson_video(
     await db.commit()
     await db.refresh(asset)
 
-    # Transkodlash holatini fon rejimida kuzatamiz
     if asset.status is VideoAssetStatus.processing:
         from app.worker.tasks.video import poll_video_status
 
@@ -172,7 +161,7 @@ async def delete_lesson_video(lesson_id: uuid.UUID, user: TeacherUser, db: DbSes
     asset = lesson.video_asset
     try:
         await get_video_provider(asset.provider).delete_video(asset.external_video_id)
-    except Exception as exc:  # provayderdagi xato DB'ni bloklamasligi kerak
+    except Exception as exc:
         logger.warning("Video provayderdan o'chirilmadi: %s", exc)
 
     await db.delete(asset)
@@ -180,9 +169,6 @@ async def delete_lesson_video(lesson_id: uuid.UUID, user: TeacherUser, db: DbSes
     return Message(message="Video o'chirildi")
 
 
-# ===================================================================
-#  Talaba: himoyalangan playback
-# ===================================================================
 @router.get(
     "/lessons/{lesson_id}/playback",
     response_model=PlaybackResponse,
@@ -203,7 +189,6 @@ async def get_playback_url(
     if asset.status is not VideoAssetStatus.ready:
         raise ValidationError("Video hali tayyor emas (transkodlanmoqda)")
 
-    # Preview darslar hammaga ochiq; qolganlari uchun enrollment tekshiriladi
     if not lesson.is_preview:
         if user is None:
             raise PermissionDeniedError("Videoni ko'rish uchun tizimga kiring")
@@ -253,7 +238,6 @@ async def _assert_has_access(db, user_id: uuid.UUID, lesson: Lesson) -> None:
         )
     )
     if enrollment is None:
-        # Kurs egasi va admin ham ko'ra oladi
         from app.models.catalog import Course
         from app.models.enums import UserRole
         from app.models.user import User
@@ -265,9 +249,6 @@ async def _assert_has_access(db, user_id: uuid.UUID, lesson: Lesson) -> None:
         raise PermissionDeniedError("Bu kursni sotib olmagansiz")
 
 
-# ===================================================================
-#  Umumiy fayl yuklash (muqova rasm, PDF material)
-# ===================================================================
 @router.post(
     "/uploads",
     response_model=UploadedFileResponse,

@@ -71,7 +71,6 @@ export default function SuperAdminDashboard() {
 
   return (
     <div className="space-y-6">
-      {/* KPI qatori */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           label="Jami daromad"
@@ -126,7 +125,6 @@ export default function SuperAdminDashboard() {
         />
       </div>
 
-      {/* Kutilayotgan ishlar */}
       {(kpi?.courses_pending ?? 0) > 0 || (kpi?.pending_payouts ?? 0) > 0 ? (
         <div className="grid gap-4 sm:grid-cols-2">
           {(kpi?.courses_pending ?? 0) > 0 ? (
@@ -161,7 +159,6 @@ export default function SuperAdminDashboard() {
         </div>
       ) : null}
 
-      {/* Grafik + faoliyat */}
       <div className="grid gap-5 lg:grid-cols-[1.6fr_1fr]">
         <div className="rounded-xl border bg-card p-5">
           <h2 className="mb-4 text-lg font-semibold">Daromad (30 kun)</h2>

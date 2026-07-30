@@ -88,7 +88,6 @@ export default function BulkEnrollPage() {
 
   return (
     <div className="max-w-3xl space-y-6">
-      {/* 1. Kurs tanlash */}
       <section className="rounded-xl border bg-card p-5">
         <h2 className="text-lg font-semibold">1. Kurslarni tanlang</h2>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -133,7 +132,6 @@ export default function BulkEnrollPage() {
         ) : null}
       </section>
 
-      {/* 2. Xodimlar */}
       <section className="rounded-xl border bg-card p-5">
         <h2 className="text-lg font-semibold">2. Xodimlarni kiriting</h2>
 
@@ -180,7 +178,6 @@ export default function BulkEnrollPage() {
         </div>
       </section>
 
-      {/* 3. Yakunlash */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border bg-card p-5">
         <p className="text-sm text-muted-foreground">
           {selected.length} kurs × {emails.length} xodim ={" "}
@@ -196,7 +193,6 @@ export default function BulkEnrollPage() {
         </Button>
       </div>
 
-      {/* Natija */}
       {result ? (
         <Alert variant="success" title="Yozilish yakunlandi">
           <ul className="mt-2 space-y-1 text-sm">

@@ -1,5 +1,3 @@
-"""Tashkilotlar: maktab / ustoz / o'quv markaz / B2B mijoz."""
-
 from __future__ import annotations
 
 import uuid
@@ -21,7 +19,6 @@ from app.schemas.common import Message, ORMModel, Page
 router = APIRouter(tags=["Organizations"])
 
 
-# ------------------------------------------------------------------ sxemalar
 class OrganizationCreate(BaseModel):
     name: str = Field(min_length=2, max_length=200)
     type: OrganizationType
@@ -88,7 +85,6 @@ class MemberView(ORMModel):
     created_at: datetime
 
 
-# ------------------------------------------------------------------ helperlar
 async def _unique_slug(db, name: str) -> str:
     base = slugify(name)[:200] or f"org-{generate_code(6, upper=False)}"
     slug, suffix = base, 1
@@ -117,7 +113,6 @@ def _assert_can_manage(user: User, org: Organization) -> None:
         raise PermissionDeniedError("Bu tashkilotni boshqarish huquqingiz yo'q")
 
 
-# ------------------------------------------------------------------ endpointlar
 @router.post(
     "/organizations",
     response_model=OrganizationDetail,
@@ -149,7 +144,6 @@ async def create_organization(
     db.add(org)
     await db.flush()
 
-    # Yaratuvchi avtomatik ravishda tashkilot a'zosi va admini bo'ladi
     if user.organization_id is None:
         user.organization_id = org.id
     if user.role is UserRole.teacher and payload.type in (
@@ -311,7 +305,7 @@ async def add_member(
     db: DbSession,
 ) -> MemberView:
     from app.core.security import (
-        hash_password,  # lokal import — sirkulyar bog'liqlikni oldini oladi
+        hash_password,
     )
 
     org = await _get_org_or_404(db, org_id)
@@ -325,7 +319,6 @@ async def add_member(
             email=email,
             role=payload.role,
             organization_id=org.id,
-            # Vaqtinchalik parol — foydalanuvchi "parolni tiklash" orqali o'zgartiradi
             hashed_password=hash_password(generate_code(16)),
         )
         db.add(member)
@@ -366,7 +359,6 @@ async def remove_member(
     return Message(message="A'zo tashkilotdan chiqarildi")
 
 
-# ------------------------------------------------------------------ admin
 @router.get(
     "/admin/organizations",
     response_model=Page[OrganizationDetail],

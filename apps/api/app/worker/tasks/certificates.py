@@ -1,5 +1,3 @@
-"""Sertifikat generatsiyasi task'lari."""
-
 from __future__ import annotations
 
 import logging
@@ -19,7 +17,6 @@ logger = logging.getLogger(__name__)
     default_retry_delay=60,
 )
 def issue_certificate(self, enrollment_id: str) -> dict:
-    """`CERTIFICATE_ISSUE` — kurs 100% tugallanganda ishga tushadi."""
     try:
         with sync_session() as db:
             certificate = CertificateService(db).issue(uuid.UUID(enrollment_id))
@@ -32,7 +29,6 @@ def issue_certificate(self, enrollment_id: str) -> dict:
         logger.exception("Sertifikat generatsiyasi xato: %s", enrollment_id)
         raise self.retry(exc=exc) from exc
 
-    # Telegram orqali xabar beramiz
     from app.worker.tasks.notifications import notify_certificate_ready
 
     notify_certificate_ready.delay(enrollment_id, result["certificate_code"])
@@ -42,7 +38,6 @@ def issue_certificate(self, enrollment_id: str) -> dict:
 
 @celery_app.task(name="app.worker.tasks.certificates.regenerate_certificate")
 def regenerate_certificate(enrollment_id: str) -> dict:
-    """Admin uchun: sertifikatni qayta generatsiya qilish (shablon o'zgarganda)."""
     with sync_session() as db:
         certificate = CertificateService(db).issue(uuid.UUID(enrollment_id), force=True)
         return {"certificate_code": certificate.certificate_code, "pdf_url": certificate.pdf_url}
