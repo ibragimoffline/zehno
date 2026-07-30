@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 from datetime import UTC, datetime, timedelta
+from urllib.parse import urlparse
 
 from app.core.config import settings
 from app.core.exceptions import IntegrationError
@@ -30,6 +31,7 @@ class PeerTubeProvider(VideoProvider):
 
     def __init__(self) -> None:
         self.base_url = settings.PEERTUBE_BASE_URL.rstrip("/")
+        self.public_url = (settings.PEERTUBE_PUBLIC_URL or settings.PEERTUBE_BASE_URL).rstrip("/")
         self._token: str | None = None
         self._token_expires: datetime | None = None
 
@@ -37,6 +39,19 @@ class PeerTubeProvider(VideoProvider):
         return bool(
             settings.PEERTUBE_BASE_URL and settings.PEERTUBE_USERNAME and settings.PEERTUBE_PASSWORD
         )
+
+    def _base_headers(self) -> dict[str, str]:
+        internal = urlparse(self.base_url).netloc
+        public = urlparse(self.public_url).netloc
+        if public and public != internal:
+            return {"Host": public}
+        return {}
+
+    async def _pt_request(self, method: str, path: str, *, auth: bool = True, **kwargs):
+        headers = {**self._base_headers(), **(kwargs.pop("headers", None) or {})}
+        if auth:
+            headers["Authorization"] = f"Bearer {await self._access_token()}"
+        return await self._request(method, f"{self.base_url}{path}", headers=headers, **kwargs)
 
     async def _access_token(self) -> str:
         if self._token and self._token_expires and self._token_expires > datetime.now(UTC):
@@ -48,10 +63,11 @@ class PeerTubeProvider(VideoProvider):
                 provider=self.provider_name,
             )
 
-        clients = (await self._request("GET", f"{self.base_url}/api/v1/oauth-clients/local")).json()
-        response = await self._request(
+        clients = (await self._pt_request("GET", "/api/v1/oauth-clients/local", auth=False)).json()
+        response = await self._pt_request(
             "POST",
-            f"{self.base_url}/api/v1/users/token",
+            "/api/v1/users/token",
+            auth=False,
             data={
                 "client_id": clients["client_id"],
                 "client_secret": clients["client_secret"],
@@ -68,19 +84,10 @@ class PeerTubeProvider(VideoProvider):
         )
         return self._token
 
-    async def _auth_headers(self) -> dict[str, str]:
-        return {"Authorization": f"Bearer {await self._access_token()}"}
-
     async def upload_video(self, file_bytes: bytes, meta: VideoMeta) -> UploadResult:
         channel_id = settings.PEERTUBE_CHANNEL_ID
         if not channel_id:
-            me = (
-                await self._request(
-                    "GET",
-                    f"{self.base_url}/api/v1/users/me",
-                    headers=await self._auth_headers(),
-                )
-            ).json()
+            me = (await self._pt_request("GET", "/api/v1/users/me")).json()
             channels = me.get("videoChannels") or []
             if not channels:
                 raise IntegrationError(
@@ -98,10 +105,9 @@ class PeerTubeProvider(VideoProvider):
         if meta.description:
             form["description"] = meta.description[:1000]
 
-        response = await self._request(
+        response = await self._pt_request(
             "POST",
-            f"{self.base_url}/api/v1/videos/upload",
-            headers=await self._auth_headers(),
+            "/api/v1/videos/upload",
             data=form,
             files={
                 "videofile": (
@@ -120,16 +126,10 @@ class PeerTubeProvider(VideoProvider):
         )
 
     async def get_playback_url(self, video_id: str, user_id: str) -> PlaybackUrl:
-        headers = await self._auth_headers()
+        token_response = await self._pt_request("POST", f"/api/v1/videos/{video_id}/token")
+        file_token = (token_response.json().get("files") or {}).get("token")
 
-        token_response = await self._request(
-            "POST", f"{self.base_url}/api/v1/videos/{video_id}/token", headers=headers
-        )
-        file_token = token_response.json().get("files", {}).get("token")
-
-        video = (
-            await self._request("GET", f"{self.base_url}/api/v1/videos/{video_id}", headers=headers)
-        ).json()
+        video = (await self._pt_request("GET", f"/api/v1/videos/{video_id}")).json()
 
         streaming = video.get("streamingPlaylists") or []
         if streaming:
@@ -151,32 +151,22 @@ class PeerTubeProvider(VideoProvider):
             expires_at=datetime.now(UTC) + timedelta(minutes=10),
             content_type=content_type,
             thumbnail_url=(
-                f"{self.base_url}{video['thumbnailPath']}" if video.get("thumbnailPath") else None
+                f"{self.public_url}{video['thumbnailPath']}" if video.get("thumbnailPath") else None
             ),
         )
 
     async def get_embed_code(self, video_id: str) -> str:
         return (
-            f'<iframe src="{self.base_url}/videos/embed/{video_id}" '
+            f'<iframe src="{self.public_url}/videos/embed/{video_id}" '
             'style="width:100%;aspect-ratio:16/9;border:0" allowfullscreen '
             'sandbox="allow-same-origin allow-scripts allow-popups"></iframe>'
         )
 
     async def delete_video(self, video_id: str) -> None:
-        await self._request(
-            "DELETE",
-            f"{self.base_url}/api/v1/videos/{video_id}",
-            headers=await self._auth_headers(),
-        )
+        await self._pt_request("DELETE", f"/api/v1/videos/{video_id}")
 
     async def get_upload_status(self, video_id: str) -> VideoAssetStatus:
-        video = (
-            await self._request(
-                "GET",
-                f"{self.base_url}/api/v1/videos/{video_id}",
-                headers=await self._auth_headers(),
-            )
-        ).json()
+        video = (await self._pt_request("GET", f"/api/v1/videos/{video_id}")).json()
         state = (video.get("state") or {}).get("id")
         if state == STATE_PUBLISHED:
             return VideoAssetStatus.ready
@@ -188,7 +178,7 @@ class PeerTubeProvider(VideoProvider):
         if not self.is_configured():
             return False, "PeerTube sozlanmagan"
         try:
-            await self._request("GET", f"{self.base_url}/api/v1/config")
+            await self._pt_request("GET", "/api/v1/config", auth=False)
             return True, None
         except IntegrationError as exc:
             return False, str(exc)

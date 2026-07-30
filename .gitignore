@@ -1,8 +1,63 @@
-# ---- Env & secrets ----
+# =====================================================================
+#  SIRLAR — HECH QACHON COMMIT QILINMAYDI
+#  Bu bo'limni o'zgartirishdan oldin .githooks/pre-commit ni ham ko'ring.
+# =====================================================================
+
+# Muhit fayllari (barcha variantlari)
 .env
-.env.local
-.env.*.local
+.env.*
+*.env
+env.local
+# Yagona istisno — kalitsiz namuna
 !.env.example
+!.env.*.example
+
+# Kalitlar, sertifikatlar, SSH
+*.pem
+*.key
+*.crt
+*.cer
+*.der
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.ppk
+id_rsa*
+id_dsa*
+id_ecdsa*
+id_ed25519*
+known_hosts
+.ssh/
+
+# Bulut va provayder hisob ma'lumotlari
+credentials
+credentials.json
+service-account*.json
+gcp-*.json
+firebase-adminsdk*.json
+.aws/
+.gcloud/
+.azure/
+.netrc
+.pgpass
+
+# Sir saqlaydigan papka/fayllar
+secrets/
+.secrets/
+*.secret
+*.secrets
+secrets.y*ml
+*-secrets.y*ml
+vault.y*ml
+
+# Baza dumplari (shaxsiy ma'lumot bo'lishi mumkin)
+*.dump
+*.sql.gz
+*.sql.bz2
+*.bak
+backup/
+backups/
 
 # ---- Python / FastAPI ----
 __pycache__/
@@ -48,3 +103,6 @@ Thumbs.db
 *.log
 storage/
 tmp/
+*.mp4
+*.mkv
+*.mov

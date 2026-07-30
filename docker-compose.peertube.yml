@@ -37,6 +37,9 @@ services:
       PEERTUBE_WEBSERVER_HOSTNAME: ${PEERTUBE_HOSTNAME:-localhost}
       PEERTUBE_WEBSERVER_PORT: 9010
       PEERTUBE_WEBSERVER_HTTPS: "false"
+      # Majburiy — qiymat .env dan olinadi (repozitoriyada saqlanmaydi).
+      # Yangi qiymat:  openssl rand -hex 32
+      PEERTUBE_SECRET: ${PEERTUBE_SECRET:?PEERTUBE_SECRET .env faylida ko'rsatilishi shart}
       PEERTUBE_TRUST_PROXY: '["127.0.0.1", "loopback", "172.16.0.0/12"]'
       PEERTUBE_DB_HOSTNAME: peertube-db
       PEERTUBE_DB_USERNAME: peertube
@@ -54,11 +57,23 @@ services:
     volumes:
       - ptdata:/data
       - ptconfig:/config
+    networks:
+      - default
+      - zehno
     depends_on:
       peertube-db:
         condition: service_healthy
       peertube-redis:
         condition: service_started
+
+networks:
+  default:
+  # Asosiy stack tarmog'i — `api` konteyneri PeerTube'ga `http://peertube:9000`
+  # manzili orqali murojaat qila olishi uchun. Avval `docker compose up -d` ishga
+  # tushirilgan bo'lishi shart (tarmoq o'sha yerda yaratiladi).
+  zehno:
+    external: true
+    name: zehno_default
 
 volumes:
   ptdb:

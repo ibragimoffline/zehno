@@ -1,0 +1,32 @@
+#!/bin/sh
+#
+# Zehno.uz - sirlarni commit qilishdan himoya qiluvchi hook.
+#
+# O'rnatish (har bir dasturchi bir marta):
+#     git config core.hooksPath .githooks
+#
+# Tekshiruv mantiqi scripts/scan-secrets.sh da (u alohida ham ishlatiladi).
+# Xato aniqlash bo'lsa:  ALLOW_SECRET=1 git commit ...
+
+set -eu
+
+SCANNER="$(git rev-parse --show-toplevel)/scripts/scan-secrets.sh"
+
+if [ ! -f "$SCANNER" ]; then
+    echo "OGOHLANTIRISH: scripts/scan-secrets.sh topilmadi - sir tekshiruvi o'tkazilmadi" >&2
+    exit 0
+fi
+
+if sh "$SCANNER" --staged; then
+    exit 0
+fi
+
+if [ "${ALLOW_SECRET:-}" = "1" ]; then
+    echo "ALLOW_SECRET=1 - tekshiruv ataylab chetlab o'tildi"
+    echo ""
+    exit 0
+fi
+
+echo "Xato aniqlash bo'lsa:  ALLOW_SECRET=1 git commit ..."
+echo ""
+exit 1

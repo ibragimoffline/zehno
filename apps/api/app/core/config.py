@@ -73,6 +73,7 @@ class Settings(BaseSettings):
     VIDEO_SIGNED_URL_TTL_MINUTES: int = 15
 
     PEERTUBE_BASE_URL: str = "http://localhost:9010"
+    PEERTUBE_PUBLIC_URL: str = "http://localhost:9010"
     PEERTUBE_USERNAME: str | None = None
     PEERTUBE_PASSWORD: str | None = None
     PEERTUBE_CHANNEL_ID: str | None = None

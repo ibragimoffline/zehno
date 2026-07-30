@@ -30,14 +30,26 @@ class Bitrix24Provider(CrmProvider):
         return (settings.BITRIX24_WEBHOOK_URL or "").rstrip("/")
 
     async def _call(self, method: str, payload: dict) -> dict:
-        response = await self._request("POST", f"{self._base}/{method}.json", json=payload)
+        try:
+            response = await self._request("POST", f"{self._base}/{method}.json", json=payload)
+        except IntegrationError as exc:
+            raise IntegrationError(
+                f"Bitrix24 `{method}`: {_explain(exc.details)}",
+                provider=self.provider_name,
+                details=exc.details,
+            ) from exc
+
         data = response.json()
         if "error" in data:
             raise IntegrationError(
-                f"Bitrix24 xatolik: {data.get('error_description') or data['error']}",
+                f"Bitrix24 `{method}`: {data.get('error_description') or data['error']}",
                 provider=self.provider_name,
             )
         return data
+
+    async def scopes(self) -> list[str]:
+        data = await self._call("scope", {})
+        return [scope for scope in (data.get("result") or []) if scope]
 
     async def upsert_company(self, company: CrmCompany) -> str:
         if company.external_id:
@@ -159,3 +171,17 @@ def _company_contacts(company: CrmCompany) -> dict:
     if company.website:
         fields["WEB"] = [{"VALUE": company.website, "VALUE_TYPE": "WORK"}]
     return fields
+
+
+def _explain(details: object) -> str:
+    raw = str(details or "")
+    if "insufficient_scope" in raw:
+        return (
+            "webhook tokenida yetarli ruxsat yo'q. Bitrix24 portalida webhook sozlamalarini "
+            "oching va `crm` ruxsatini belgilang (Contact, Company, Deal, Timeline)"
+        )
+    if "invalid_token" in raw or "NO_AUTH_FOUND" in raw:
+        return "webhook URL yaroqsiz yoki o'chirilgan"
+    if "QUERY_LIMIT_EXCEEDED" in raw:
+        return "so'rovlar chegarasi oshdi (sekundiga 2 ta) — keyinroq qayta urinamiz"
+    return raw[:200] or "noma'lum xatolik"
