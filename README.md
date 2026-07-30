@@ -113,6 +113,31 @@ cd apps/web && npm run typecheck && npm run lint && npm run build
 
 ---
 
+## Sirlarni himoyalash (majburiy qadam)
+
+Repozitoriyani klonlagach **bir marta** bajaring — bu pre-commit tekshiruvini yoqadi:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+Shundan keyin `.env`, `*.pem`, SSH kalitlari va matn ichidagi tokenlar (Telegram,
+Bitrix24, AWS, GitHub, JWT, private key) commit qilinmaydi — hook commitni to'xtatadi.
+
+```bash
+./scripts/scan-secrets.sh            # barcha kuzatilayotgan fayllar
+./scripts/scan-secrets.sh --staged   # commitga tayyorlanganlar
+./scripts/scan-secrets.sh --history  # git tarixi (push qilinganlar)
+```
+
+Qoidalar:
+
+- **Barcha kalitlar faqat `.env` da** — u `.gitignore` da, hech qachon commit qilinmaydi
+- `.env.example` da faqat bo'sh yoki `change-me...` kabi namuna qiymatlar
+- Kalit tasodifan commit qilinsa — uni olib tashlash **yetarli emas**, provayderda
+  albatta almashtiring (u allaqachon oshkor bo'lgan)
+- Xato aniqlash (false positive) bo'lsa: `ALLOW_SECRET=1 git commit ...`
+
 ## Loyiha strukturasi
 
 ```

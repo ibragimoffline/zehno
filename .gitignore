@@ -99,6 +99,11 @@ miniodata/
 .DS_Store
 Thumbs.db
 
+# ---- Celery ----
+celerybeat-schedule
+celerybeat-schedule.*
+celerybeat.pid
+
 # ---- Local artefacts ----
 *.log
 storage/

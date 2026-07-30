@@ -12,6 +12,10 @@
 
 set -eu
 
+# SIGPIPE hook'ni o'ldirib tekshiruvni chetlab o'tishga imkon bermasligi uchun.
+# Hisobot stdout emas, stderr'ga yoziladi - `git commit | head` uni qisqartira olmaydi.
+trap '' PIPE 2>/dev/null || true
+
 MODE="${1:---all}"
 TMP="${TMPDIR:-/tmp}"
 NAME_HITS="$TMP/zehno-names.$$"
@@ -121,40 +125,41 @@ scan 'xox[baprs]-[A-Za-z0-9-]{20,}'                                       'Slack
 scan '(SECRET|PASSWORD|TOKEN|API_?KEY|WEBHOOK_URL)[A-Z_]*[[:space:]]*[:=][[:space:]]*.?[A-Za-z0-9+/=_-]{24,}' 'Uzun kalit/parol qiymati'
 
 # --------------------------------------------------------------- natija
+set +e
 if [ ! -s "$NAME_HITS" ] && [ ! -s "$BODY_HITS" ]; then
-    [ "$MODE" != "--staged" ] && echo "Toza - $(echo "$FILES" | wc -l) faylda sir topilmadi."
+    [ "$MODE" != "--staged" ] && echo >&2 "Toza - $(echo "$FILES" | wc -l) faylda sir topilmadi."
     exit 0
 fi
 
-echo ""
-echo "=============================================================="
+echo >&2 ""
+echo >&2 "=============================================================="
 if [ "$MODE" = "--staged" ]; then
-    echo "  COMMIT TO'XTATILDI - maxfiy ma'lumot aniqlandi"
+    echo >&2 "  COMMIT TO'XTATILDI - maxfiy ma'lumot aniqlandi"
 else
-    echo "  MAXFIY MA'LUMOT ANIQLANDI"
+    echo >&2 "  MAXFIY MA'LUMOT ANIQLANDI"
 fi
-echo "=============================================================="
-echo ""
+echo >&2 "=============================================================="
+echo >&2 ""
 
 if [ -s "$NAME_HITS" ]; then
-    echo "Taqiqlangan fayllar:"
+    echo >&2 "Taqiqlangan fayllar:"
     while IFS='|' read -r f why; do
-        [ -n "$f" ] && echo "  * $f  ($why)"
+        [ -n "$f" ] && echo >&2 "  * $f  ($why)"
     done < "$NAME_HITS"
-    echo ""
+    echo >&2 ""
 fi
 
 if [ -s "$BODY_HITS" ]; then
-    echo "Fayl ichidagi sirlar:"
+    echo >&2 "Fayl ichidagi sirlar:"
     while IFS='|' read -r f label hit; do
-        [ -n "$f" ] && { echo "  * $f  ->  $label"; echo "      $hit"; }
+        [ -n "$f" ] && { echo >&2 "  * $f  ->  $label"; echo >&2 "      $hit"; }
     done < "$BODY_HITS"
-    echo ""
+    echo >&2 ""
 fi
 
-echo "Nima qilish kerak:"
-echo "  1. Sirni fayldan olib tashlang, .env ga ko'chiring"
-echo "  2. Indeksdan chiqaring:  git restore --staged <fayl>"
-echo "  3. Kalit oshkor bo'lgan bo'lsa - provayderda ALMASHTIRING"
-echo ""
+echo >&2 "Nima qilish kerak:"
+echo >&2 "  1. Sirni fayldan olib tashlang, .env ga ko'chiring"
+echo >&2 "  2. Indeksdan chiqaring:  git restore --staged <fayl>"
+echo >&2 "  3. Kalit oshkor bo'lgan bo'lsa - provayderda ALMASHTIRING"
+echo >&2 ""
 exit 1
