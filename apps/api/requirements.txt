@@ -1,41 +1,41 @@
 # ---- Web framework ----
-fastapi==0.115.6
-uvicorn[standard]==0.34.0
-python-multipart==0.0.20
+fastapi==0.140.7
+uvicorn[standard]==0.51.0
+python-multipart==0.0.32
 
 # ---- Settings / validation ----
-pydantic==2.10.5
-pydantic-settings==2.7.1
-email-validator==2.2.0
+pydantic==2.13.4
+pydantic-settings==2.14.2
+email-validator==2.3.0
 python-slugify==8.0.4
 
 # ---- Database ----
-SQLAlchemy[asyncio]==2.0.37
-asyncpg==0.30.0
-psycopg[binary]==3.2.4
-alembic==1.14.1
-greenlet==3.1.1
+SQLAlchemy[asyncio]==2.0.51
+asyncpg==0.31.0
+psycopg[binary]==3.3.4
+alembic==1.18.5
+greenlet==3.5.4
 
 # ---- Auth (JWT JOSE) ----
-python-jose[cryptography]==3.3.0
-argon2-cffi==23.1.0
-bcrypt==4.2.1
+python-jose[cryptography]==3.5.0
+argon2-cffi==25.1.0
+bcrypt==5.0.0
 
 # ---- Cache / queue ----
-redis==5.2.1
-celery[redis]==5.4.0
+redis==8.0.1
+celery[redis]==5.6.3
 
 # Rate limiting uchun qo'shimcha paket kerak emas —
 # `app/core/rate_limit.py` Redis'dagi fixed-window hisoblagichdan foydalanadi.
 
 # ---- HTTP client (integratsiyalar) ----
 httpx==0.28.1
-tenacity==9.0.0
+tenacity==9.1.4
 
 # ---- Object storage (MinIO / S3) ----
-boto3==1.36.6
+boto3==1.43.57
 
 # ---- Sertifikat (PDF + QR) ----
-fpdf2==2.8.2
-qrcode[pil]==8.0
-Pillow==11.1.0
+fpdf2==2.8.7
+qrcode[pil]==8.2
+Pillow==12.3.0
