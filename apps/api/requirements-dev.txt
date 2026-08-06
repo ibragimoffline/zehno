@@ -1,8 +1,8 @@
 -r requirements.txt
 
-pytest==8.3.4
-pytest-asyncio==0.25.2
-aiosqlite==0.20.0
-ruff==0.16.0
-mypy==1.14.1
+pytest==9.1.1
+pytest-asyncio==1.4.0
+aiosqlite==0.22.1
+ruff==0.16.1
+mypy==2.3.0
 types-python-slugify==8.0.2.20240310
